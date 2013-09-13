@@ -1,0 +1,1 @@
+Simple command line tool that publishes random power values to an AMQP queue to simulate an energy production sensor
