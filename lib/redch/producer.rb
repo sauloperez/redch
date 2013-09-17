@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "rubygems"
+require "json"
 require "amqp"
 
 class Producer
@@ -10,7 +11,8 @@ class Producer
   end
 
   def publish(message, options = {})
-    @exchange.publish(message, options)
+    # Publish the JSON encoded message to the exchange
+    @exchange.publish(message.to_json, options)
 
     # Log the published data
     puts message
