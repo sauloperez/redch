@@ -6,20 +6,26 @@ class Redch::CLI < Thor
 
   desc "simulate DEVICE_ID", "Simulate a sensor generating kWh sensor data samples"
   def simulate(device_id = 1)
-    @mean = 0.1
-    @dev = 0.1
-    @interval = 1
-
-    # Send the data specifing the device api key
-    gateway = Redch::Gateway.new(ENV["REDCH_KEY_#{device_id}"], @interval)
-
-    # Define a proc to be called each time interval
-    value = Proc.new { generate_value }
     begin
+      @mean = 0.1
+      @dev = 0.1
+      @interval = 1
+
+      # Send the data specifing the device api key
+      gateway = Redch::Gateway.new(ENV["REDCH_KEY_#{device_id}"], @interval)
+
+      # Define a proc to be called each time interval
+      value = Proc.new { generate_value }
       gateway.send_samples(&value)
     rescue Interrupt
-      puts "\nBye"
+      shut_down
     end
+  end
+
+  # Handle the shut down gracefully.
+  # Save state or whatever needed
+  def shut_down
+    puts "\nBye"
   end
 
   private
