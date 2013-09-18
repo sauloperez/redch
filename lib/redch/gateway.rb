@@ -11,7 +11,7 @@ module Redch
 
     def send_samples(&generate_value)
       begin
-        AMQP.start("amqp://guest:guest@dev.rabbitmq.com") do |connection, open_ok|  
+        AMQP.start(settings) do |connection, open_ok|  
 
           # Connect to a channel with a direct exchange
           producer = Producer.new(AMQP::Channel.new(connection), AMQP::Exchange.default)
@@ -32,6 +32,15 @@ module Redch
       rescue Interrupt
         raise Interrupt
       end
+    end
+
+    def default_settings
+      raise ArgumentError, "Environmental variable AMQP_URL must exist" if ENV["AMQP_URL"].nil?
+      URI.encode(ENV["AMQP_URL"])
+    end
+
+    def settings
+      @settings ||= default_settings
     end
   end
 end
