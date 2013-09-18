@@ -22,10 +22,13 @@ class Redch::CLI < Thor
     end
   end
 
-  # Handle the shut down gracefully.
-  # Save state or whatever needed
-  def shut_down
-    puts "\nBye"
+  # Methods not listed as commands
+  no_commands do
+    # Handle the shut down gracefully.
+    # Save state or whatever needed
+    def shut_down
+      puts "\nBye"
+    end
   end
 
   private
