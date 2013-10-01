@@ -17,22 +17,33 @@ module Redch
         accept: "application/gml+xml"
       }
 
-      def post_sensor(sensor_profile)
+      def post_sensor(sensor)
         resource = sos_resource("/sensors")
-        body = build(sensor_profile)
+        body = build(sensor, __method__)
+
         http_post(resource, body) do |response|
           parsed = @parser.parse response.body
           parsed['sosREST:Sensor']['sosREST:link']
         end
       end
 
+      def post_observation(observation)
+        resource = sos_resource("/observations")
+        body = build(observation, __method__)
+
+        http_post(resource, body) do |response|
+          parsed = @parser.parse response.body
+          parsed['sosREST:Observation']['sosREST:link']
+        end
+      end
+
       private
-      def build(sensor_profile)
-        path = File.expand_path(File.join('../templates', 'post_sensor.slim'), __FILE__)
+      def build(data, operation)
+        path = File.expand_path(File.join('../templates', "#{operation}.slim"), __FILE__)
         template = File.open(path, "r").read
 
         layout = Slim::Template.new { template }
-        layout.render(sensor_profile)
+        layout.render(data)
       end
 
       def self.headers

@@ -19,21 +19,18 @@ describe Redch::SOS::Client do
     it "should return an array of links to the supported sensor operations" do
       sensor_profile = {
         uniqueID: get_MAC_address,
-        longName: 'OSIRIS weather station 123 on top of the IfGI',
-        shortName: 'OSIRIS Weather Station 123',
-        intendedApplication: 'weather',
+        intendedApplication: 'energy',
         sensorType: 'in-situ',
         beginPosition: '2009-01-15',
         endPosition: '2009-01-20',
         featureOfInterestID: 'http://www.52north.org/test/featureOfInterest/9',
-        organizationName: 'CREAF',
-        email: 'creaf@creaf.cat',
-        position: { x: '2592308.332', y: '5659592.542', z: '5659592.542'},
         observationType: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
         featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint'
       }
 
       response = @sos_client.post_sensor sensor_profile
+
+      pp response
 
       response.should be_kind_of(Array)
       response.should_not be_empty
@@ -42,7 +39,19 @@ describe Redch::SOS::Client do
 
   describe "#post_observation", :post_observation => true do
     it "should return an array of links to the the supported observation operations" do
+      time_s = Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s
+      observation = {
+        sensor: 'F2:72:79:3F:05:99',
+        observedProperty: 'urn:ogc:def:property:OGC:1.0:precipitation',
+        featureOfInterest: 'http://www.52north.org/test/featureOfInterest/9',
+        result: '5.28',
+        timePosition: time_s,
+        offering: 'http://www.example.org/offering/F2:72:79:3F:05:99/observations'
+      }
+
       response = @sos_client.post_observation observation
+
+      pp response
 
       response.should be_kind_of(Array)
       response.should_not be_empty

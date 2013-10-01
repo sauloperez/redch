@@ -8,3 +8,4 @@ gem "rspec", "~> 2.14.1"
 gem "nokogiri", "~> 1.6.0"
 gem "nori", "~> 2.3.0"
 gem "slim", "~> 2.0.1", :require => 'slim/logic_less'
+gem "foreman"

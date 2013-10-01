@@ -1,17 +1,10 @@
-sos:Sensor xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.opengis.net/sosREST/1.0" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="2.0.0" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd   http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd"
-  swes:procedureDescriptionFormat="http://www.opengis.net/sensorML/1.0.1"
+sosREST:Sensor xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sosREST="http://www.opengis.net/sosREST/1.0" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="2.0.0" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd   http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd"
   sml:System
     sml:identification
       sml:IdentifierList
         sml:identifier name="uniqueID"
           sml:Term definition="urn:org:def:identifier:OGC:1:0:uniqueID"
             sml:value = uniqueID
-        sml:identifier name="longName"
-          sml:Term definition="urn:org:def:identifier:OGC:1:0:longName"
-            sml:value = longName
-        sml:identifier name="shortName"
-          sml:Term definition="urn:org:def:identifier:OGC:1:0:shortName"
-            sml:value = shortName
     sml:classification
       sml:ClassifierList
         sml:classifier name="intendedApplication"
@@ -25,29 +18,13 @@ sos:Sensor xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.op
         gml:beginPosition = beginPosition
         gml:endPosition = endPosition
     sml:capabilities name="InsertionMetadata"
-      swe:SimpleDataRecord name="featureOfInterest" definition="urn:ogc:def:property:capabilities"
-        swe:field name="featureOfInterestID"
-          swe:text definition="FeatureOfInterest identifier"
-            swe:value = featureOfInterestID
-    sml:position name="sensorPosition"
-      swe:Position referenceFrame="urn:ogc:def:crs:EPSG:6.14:31466"
-        swe:location
-          swe:Vector gml:id="SYSTEM_LOCATION"
-            swe:coordinate name="easting"
-              swe:Quantity axisID="x"
-              - position
-                swe:uom code="degree"
-                swe:value = x
-            swe:coordinate name="northing"
-              swe:Quantity axisID="y"
-              - position
-                swe:uom code="degree"
-                swe:value = y
-            swe:coordinate name="altitude"
-              swe:Quantity axisID="z"
-              - position
-                swe:uom code="degree"
-                swe:value = z
+      swe:SimpleDataRecord
+        swe:field name="sos:ObservationType"
+          swe:Text
+            swe:value = observationType
+        swe:field name="sos:FeatureOfInterestType"
+          swe:Text
+            swe:value = featureOfInterestType
     sml:inputs
       sml:InputList
         sml:input name="precipitation"
@@ -57,7 +34,3 @@ sos:Sensor xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.op
         sml:output name="precipitation"
           swe:Quantity definition="urn:ogc:def:property:OGC:1.0:precipitation"
             swe:uom code="mm"
-  swes:metadata
-    sos:InsertionMetada
-      sos:observationType = observationType
-      sos:featureOfInterestType = featureOfInterestType
