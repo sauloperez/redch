@@ -14,7 +14,7 @@ module Redch
     end
 
     # return a random valid MAC address
-    def get_MAC_address
+    def random_MAC_address
       (1..6).map { "%0.2X"%rand(256) }.join(':')
     end
   end

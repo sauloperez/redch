@@ -1,60 +1,93 @@
 require 'spec_helper'
 
-RSpec.configure do |c|
-  c.include Redch::Helpers
-end
-
 describe Redch::SOS::Client do
+
+  extend Redch::Helpers
+
   before :each do
     @sos_client = Redch::SOS::Client.new
   end
 
-  describe "#new" do
-    it "takes no parameters and returns a Redch::SOS::Client object" do
-      @sos_client.should be_an_instance_of Redch::SOS::Client
+  describe "#register_device", :register_device => true do
+    it "takes an id and registers the device in the SOS server" do
+      id = Time.now.getutc.to_i.to_s
+      expect(@sos_client.register_device(id)).to eq(id)
     end
   end
 
   describe "#post_sensor", :post_sensor => true do
-    it "should return an array of links to the supported sensor operations" do
-      sensor_profile = {
-        uniqueID: get_MAC_address,
-        intendedApplication: 'energy',
-        sensorType: 'in-situ',
-        beginPosition: '2009-01-15',
-        endPosition: '2009-01-20',
-        featureOfInterestID: 'http://www.52north.org/test/featureOfInterest/9',
-        observationType: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
-        featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint'
-      }
 
-      response = @sos_client.post_sensor sensor_profile
+    let(:sensor_profile) { {
+      uniqueID: random_MAC_address,
+      intendedApplication: 'energy',
+      sensorType: 'in-situ',
+      beginPosition: '2009-01-15',
+      endPosition: '2009-01-20',
+      featureOfInterestID: 'http://www.52north.org/test/featureOfInterest/9',
+      observationType: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
+      featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint'
+    } }
 
-      pp response
+    context "when the sensor has not been registered yet" do
+      it "returns the sensor assigned id" do
+        response = @sos_client.post_sensor sensor_profile
+        expect(response).to be_kind_of(String)
+        expect(response).to_not be_empty
+      end
+    end
 
-      response.should be_kind_of(Array)
-      response.should_not be_empty
+    context "when the sensor has already been registered" do
+      it "raises" do
+        @sos_client.post_sensor sensor_profile
+        expect { @sos_client.post_sensor sensor_profile }.to raise_error Redch::SOS::Error
+      end
     end
   end
 
   describe "#post_observation", :post_observation => true do
-    it "should return an array of links to the the supported observation operations" do
-      time_s = Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s
-      observation = {
-        sensor: 'F2:72:79:3F:05:99',
-        observedProperty: 'urn:ogc:def:property:OGC:1.0:precipitation',
-        featureOfInterest: 'http://www.52north.org/test/featureOfInterest/9',
-        result: '5.28',
-        timePosition: time_s,
-        offering: 'http://www.example.org/offering/F2:72:79:3F:05:99/observations'
-      }
 
-      response = @sos_client.post_observation observation
+    let(:sensor_id) { random_MAC_address }
+    let(:sensor_profile) { {
+      uniqueID: sensor_id,
+      intendedApplication: 'energy',
+      sensorType: 'in-situ',
+      beginPosition: '2009-01-15',
+      endPosition: '2009-01-20',
+      featureOfInterestID: 'http://www.52north.org/test/featureOfInterest/9',
+      observationType: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
+      featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint'
+    } }
 
-      pp response
+    let(:observation) { {
+      sensor: sensor_id,
+      observedProperty: 'urn:ogc:def:property:OGC:1.0:precipitation',
+      featureOfInterest: 'http://www.52north.org/test/featureOfInterest/9',
+      result: rand.round(2),
+      timePosition: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
+      offering: "http://www.example.org/offering/#{sensor_id}/observations"
+    } }
 
-      response.should be_kind_of(Array)
-      response.should_not be_empty
+    context "when the sensor is registered" do
+      it "returns an array of URIs to the supported observation operations" do
+        @sos_client.post_sensor sensor_profile
+        response = @sos_client.post_observation observation
+
+        expect(response).to be_kind_of(Array)
+        expect(response).to_not be_empty
+      end
     end
+
+    context "when the sensor it's not registered" do
+      it "raises" do
+        observation.merge({
+          sensor: random_MAC_address,
+          result: rand.round(2),
+          timePosition: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
+          offering: "http://www.example.org/offering/#{sensor_id}/observations"
+        })
+
+        expect { @sos_client.post_observation observation }.to raise_error
+      end
+    end   
   end
 end
