@@ -32,10 +32,14 @@ describe Redch::Setup do
     end    
   end
 
+  # It must be executed alone after previously reseting the DB with test data
+  # in order to avoid the inconsistent state produced by the #run test
   describe '#done?', :done? => true do
 
     context "when the setup has not been executed yet" do
       it "returns false" do
+        filename = Redch::Config.filename
+        File.delete(filename) if File.exist?(filename)
         expect(@setup.done?).to eq(false)
       end
     end

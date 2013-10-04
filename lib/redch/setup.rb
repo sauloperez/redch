@@ -6,7 +6,7 @@ class Redch::Setup
   end
 
   def run
-    register_device if @config.empty? || !@config.sos.device_id?
+    register_device if !done?
   end
 
   def device_id
@@ -22,8 +22,10 @@ class Redch::Setup
   # If it has been executed the config file must exist
   def done?
     Redch::Config.load
+    p 'loaded'
     true
   rescue StandardError
+    p "the file doesn't exist"
     false
   end
 
