@@ -30,7 +30,7 @@ describe Redch::Loop do
             EventMachine.stop
           end
         }
-        
+
         expect(i).to eq(n)
       end
     end
@@ -48,6 +48,14 @@ describe Redch::Loop do
       end
     end
     
+    it "raises and stops when the block raises" do
+      expect { 
+        @loop.start {
+          raise StandardError.new
+        }
+      }.to raise_error(StandardError)
+      expect(EventMachine::reactor_running?).to be(false)
+    end
   end
 
   describe '#stop', :stop => true do
