@@ -15,6 +15,7 @@ GEM
     foreman (0.63.0)
       dotenv (>= 0.7)
       thor (>= 0.13.6)
+    hashr (0.0.22)
     json (1.8.0)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
@@ -47,6 +48,7 @@ PLATFORMS
 DEPENDENCIES
   amqp (~> 1.0.2)
   foreman
+  hashr (~> 0.0.22)
   json (~> 1.8.0)
   macaddr (~> 1.6.1)
   nokogiri (~> 1.6.0)
