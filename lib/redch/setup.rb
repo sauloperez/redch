@@ -1,3 +1,5 @@
+require 'hashr'
+
 class Redch::Setup
   def initialize
     @config = Redch::Config.load
