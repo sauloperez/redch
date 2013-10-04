@@ -1,27 +1,23 @@
 require 'redch'
 require 'redch/helpers'
 require 'redch/sos'
+require 'redch/setup'
+require 'redch/simulate'
 require 'thor'
+require 'macaddr'
+require 'yaml'
 require 'pp'
 
 class Redch::CLI < Thor
 
-  desc "simulate DEVICE_ID", "Simulate a sensor generating kWh sensor data samples"
-  def simulate(device_id = 1)
-    begin
-      @mean = 0.1
-      @dev = 0.1
-      @interval = 1
+  desc "setup", "Sets up the environment to enable the use of the device"
+  def setup
+    Redch::Setup.new.run
+  end
 
-      # Send the data specifing the device api key
-      gateway = Redch::Gateway.new(ENV["REDCH_KEY_#{device_id}"], @interval)
-
-      # Define a proc to be called each time interval
-      value = Proc.new { generate_value }
-      gateway.send_samples(&value)
-    rescue Interrupt
-      shut_down
-    end
+  desc "simulate", "Simulate a sensor generating kWh sensor data samples"
+  def simulate
+    Redch::Simulate.new.run
   end
 
   # Methods not listed as commands
@@ -30,7 +26,7 @@ class Redch::CLI < Thor
     # Save state or whatever needed
     def shut_down
       puts "\nBye"
-    end
+    end    
   end
 
   private

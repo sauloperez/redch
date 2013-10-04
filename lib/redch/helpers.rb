@@ -17,5 +17,10 @@ module Redch
     def random_MAC_address
       (1..6).map { "%0.2X"%rand(256) }.join(':')
     end
+
+    def print_and_flush(str)
+      print str
+      $stdout.flush
+    end
   end
 end
