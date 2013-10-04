@@ -8,16 +8,15 @@ describe Redch::Config do
       expect(Redch::Config.load).to be_kind_of(Hashr)
     end
 
-    it "returns a Hashr instance if file doesn't exist" do
+    it "raise if file doesn't exist" do
       filename = Redch::Config.filename
       File.delete(filename) if File.exist?(filename)
-      expect(Redch::Config.load).to be_kind_of(Hashr)
+      expect { Redch::Config.load }.to raise_error(StandardError)
     end
 
     it 'returns Hashr instances on subkeys' do
       Redch::Config.save(config)
       config = Redch::Config.load
-      pp config
       expect(config.sos).to be_kind_of(Hashr)
     end
   end

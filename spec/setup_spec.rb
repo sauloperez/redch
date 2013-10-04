@@ -31,4 +31,20 @@ describe Redch::Setup do
       end
     end    
   end
+
+  describe '#done?', :done? => true do
+
+    context "when the setup has not been executed yet" do
+      it "returns false" do
+        expect(@setup.done?).to eq(false)
+      end
+    end
+
+    context "when the setup has already been executed" do
+      it "returns true" do
+        @setup.run
+        expect(@setup.done?).to eq(true)
+      end
+    end
+  end
 end

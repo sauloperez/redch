@@ -1,6 +1,8 @@
 class Redch::Setup
   def initialize
     @config = Redch::Config.load
+  rescue StandardError
+    @config = Hashr.new
   end
 
   def run
@@ -15,6 +17,14 @@ class Redch::Setup
   def register_device
     sos_client = Redch::SOS::Client.new
     store_device_id sos_client.register_device(Mac.addr)
+  end
+
+  # If it has been executed the config file must exist
+  def done?
+    Redch::Config.load
+    true
+  rescue StandardError
+    false
   end
 
   private
