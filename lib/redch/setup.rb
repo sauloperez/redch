@@ -3,9 +3,7 @@ require 'redch/config'
 
 class Redch::Setup
   def initialize
-    @config = Redch::Config.load
-  rescue StandardError
-    @config = Hashr.new
+    @config = Redch::Config.load rescue Hashr.new
   end
 
   def run
@@ -32,11 +30,11 @@ class Redch::Setup
 
   private
   def store_device_id(id)
-    if @config.sos? 
+    if @config.sos?
       @config.sos.device_id = id
     else
       @config = Hashr.new(sos: { device_id: id })
     end
     Redch::Config.save(@config)
-  end  
+  end
 end

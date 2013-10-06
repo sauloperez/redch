@@ -10,6 +10,11 @@ require 'pp'
 
 class Redch::CLI < Thor
 
+  def initialize(*args)
+    super
+    install_traps
+  end
+
   desc "setup", "Sets up the environment to enable the use of the device"
   def setup
     Redch::Setup.new.run
@@ -26,21 +31,15 @@ class Redch::CLI < Thor
     # Save state or whatever needed
     def shut_down
       puts "\nBye"
-    end    
-  end
+    end
 
-  private
-  def generate_value
-    value = @mean
-    lowest = @mean - @mean*@dev
-    highest = @mean + @mean*@dev
-    var = Random.new.rand(lowest..highest)
-
-    if [true, false].sample
-      value += var
-    else
-      # Don't allow negative values
-      value = [value - var, 0].max
+    def install_traps
+      [:INT, :TERM].each do |signal|
+        trap signal do
+          shut_down
+          exit 1
+        end
+      end
     end
   end
 end

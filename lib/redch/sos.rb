@@ -42,8 +42,6 @@ module Redch
       end
 
       def post_observation(observation)
-        check_and_set_device_id
-
         resource = sos_resource("/observations")
         body = build(observation, __method__)
 
@@ -54,11 +52,6 @@ module Redch
       end
 
       private
-      def check_and_set_device_id
-        @device_id ||= ENV["REDCH_DEVICE_ID"]
-        raise ArgumentError, "Environmental variable REDCH_DEVICE_ID must exist" if @device_id.nil?        
-      end
-
       def last_segment(uri)
         /([^\/]+$)/.match(uri)[0]
       end
