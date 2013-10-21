@@ -1,10 +1,11 @@
-require 'spec_helper'
+require './spec_helper'
 
 describe Redch::Config do
   let(:config) { Hashr.new('sos' => { 'a' => 'test' }) }
 
   describe '#load' do
     it 'returns a Hashr instance' do
+      Redch::Config.save(config)
       expect(Redch::Config.load).to be_kind_of(Hashr)
     end
 
@@ -33,5 +34,9 @@ describe Redch::Config do
       Redch::Config.save(config)
       expect(Redch::Config.load).to eq(config)
     end
+  end
+
+  after(:all) do
+    File.delete Redch::Config.filename
   end
 end
