@@ -77,10 +77,6 @@ module Redch
         }
       end
 
-      def generate_device_id
-        random_MAC_address
-      end
-
       def self.headers
         @headers
       end
