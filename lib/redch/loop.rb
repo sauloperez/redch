@@ -24,7 +24,7 @@ class Redch::Loop
   def stop(&block)
     return if !EventMachine::reactor_running?
 
-    yield
+    yield if block_given?
     EventMachine.stop
   end
 end

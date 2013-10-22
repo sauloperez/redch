@@ -12,7 +12,7 @@ class Redch::Simulate
     @interval = interval
 
     setup = Redch::Setup.new
-    if !setup.done? 
+    if !setup.done?
       print_and_flush "Registering device..."
       setup.run
       puts " DONE"
@@ -28,8 +28,13 @@ class Redch::Simulate
 
     @loop.start do
       value = generate_value.round(3)
-      @sos_client.post_observation observation(value)
-      puts "Observation with value #{value} sent"
+      begin
+        @sos_client.post_observation observation(value)
+        puts "Observation with value #{value} sent"
+      rescue Exception => e
+        puts e.message
+        @loop.stop
+      end
     end
   end
 
@@ -41,7 +46,7 @@ class Redch::Simulate
       result: value,
       timePosition: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
       offering: "http://www.redch.org/offering/#{@device_id}/observations"
-    }    
+    }
   end
 
   def generate_value
