@@ -88,12 +88,22 @@ module Redch
       def http_post(resource, payload, &block)
         yield resource.post payload, self.class.headers
       rescue RestClient::RequestFailed => e
-        if e.http_code == 400
-          parsed = @parser.parse e.response
-          exception = parsed['ows:ExceptionReport']['ows:Exception'][0] || parsed['ows:ExceptionReport']['ows:Exception']
+        message = ""
 
-          raise Redch::SOS::Error.new("#{exception['@exceptionCode']}: #{exception['ows:ExceptionText']}")
+        case e.http_code
+        when 400
+          message = "SOS Bad Request"
+        when 503
+          message = "SOS Service Unavailable"
+        else
+          parsed = @parser.parse e.response
+          if parsed.has_key?('ows:ExceptionReport')
+            ows_exception = parsed['ows:ExceptionReport']['ows:Exception']
+            exception = ows_exception[0] || ows_exception
+            message = "#{exception['@exceptionCode']}: #{exception['ows:ExceptionText']}"
+          end
         end
+        raise Redch::SOS::Error.new(message)
       end
 
       def http_put(resource, &block)
@@ -104,17 +114,26 @@ module Redch
         yield resource.delete self.class.headers
       end
 
-      def sos_host
-        "localhost:8080"
+      def default_port
+        ":8080"
       end
 
-      def base_path
+      def default_host
+        "localhost"
+      end
+
+      def default_base_path
         "/webapp/sos/rest"
+      end
+
+      def sos_endpoint(path)
+        host = ENV["SOS_HOST"] || default_host
+        "http://#{host}#{default_port}#{default_base_path}#{path}"
       end
 
       def sos_resource(path)
         @parser = Nori.new
-        RestClient::Resource.new("http://#{sos_host}#{base_path}#{path}")
+        RestClient::Resource.new sos_endpoint(path)
       end
     end
 
