@@ -12,6 +12,6 @@ class Redch::Config
   end
 
   def self.filename
-    @filename ||= File.expand_path('.redch.yml')    
+    @filename ||= File.expand_path('~/.redch.yml')
   end
 end
