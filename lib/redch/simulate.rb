@@ -40,7 +40,7 @@ class Redch::Simulate
       featureOfInterest: 'http://www.52north.org/test/featureOfInterest/9',
       result: value,
       timePosition: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
-      offering: "http://www.example.org/offering/#{@device_id}/observations"
+      offering: "http://www.redch.org/offering/#{@device_id}/observations"
     }    
   end
 
