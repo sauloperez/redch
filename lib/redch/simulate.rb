@@ -44,7 +44,8 @@ class Redch::Simulate
       observedProperty: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
       featureOfInterest: "http://www.redch.org/test/featureOfInterest/#{@device_id}",
       result: value,
-      timePosition: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
+      phenomenonTime: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
+      resultTime: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
       offering: "http://www.redch.org/offering/#{@device_id}/observations"
     }
   end

@@ -2,8 +2,10 @@ sosREST:Observation xmlns:sosREST="http://www.opengis.net/sosREST/1.0" xmlns:om=
   om:OM_Observation
     om:phenomenonTime
       gml:TimeInstant
-        gml:timePosition = timePosition
-    om:resultTime xlink:href="#phenomenonTime"
+        gml:timePosition = phenomenonTime
+    om:resultTime
+      gml:TimeInstant
+        gml:timePosition = phenomenonTime
     om:procedure xlink:href=sensor
     om:observedProperty xlink:href=observedProperty
     om:featureOfInterest
