@@ -71,9 +71,12 @@ module Redch
           sensorType: 'in-situ',
           beginPosition: '2009-01-15',
           endPosition: '2009-01-20',
-          featureOfInterestID: 'http://www.52north.org/test/featureOfInterest/9',
+          featureOfInterestID: "http://www.redch.org/test/featureOfInterest/#{id}",
           observationType: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
-          featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint'
+          featureOfInterest: "http://www.redch.org/test/featureOfInterest/#{id}",
+          featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint',
+          observablePropertyName: 'SolarPanelEnergyProduction',
+          observableProperty: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel'
         }
       end
 
@@ -90,11 +93,17 @@ module Redch
       rescue RestClient::RequestFailed => e
         message = ""
 
+        puts "failed_request = #{e.inspect}"
+
         case e.http_code
         when 400
           message = "SOS Bad Request"
+        # when 500
+        #   messahe = "SOS Internal Server Error"
         when 503
           message = "SOS Service Unavailable"
+        when nil
+          message = e
         else
           parsed = @parser.parse e.response
           if parsed.has_key?('ows:ExceptionReport')

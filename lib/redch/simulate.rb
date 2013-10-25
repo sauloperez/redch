@@ -13,9 +13,8 @@ class Redch::Simulate
 
     setup = Redch::Setup.new
     if !setup.done?
-      print_and_flush "Registering device..."
+      puts "Registering device..."
       setup.run
-      puts " DONE"
     end
 
     @device_id = Redch::Config.load.sos.device_id
@@ -41,8 +40,9 @@ class Redch::Simulate
   def observation(value)
     {
       sensor: @device_id,
-      observedProperty: 'urn:ogc:def:property:OGC:1.0:precipitation',
-      featureOfInterest: 'http://www.52north.org/test/featureOfInterest/9',
+      samplingPoint: '54.9 10.52',
+      observedProperty: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
+      featureOfInterest: "http://www.redch.org/test/featureOfInterest/#{@device_id}",
       result: value,
       timePosition: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
       offering: "http://www.redch.org/offering/#{@device_id}/observations"

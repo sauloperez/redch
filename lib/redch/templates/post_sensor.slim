@@ -27,10 +27,10 @@ sosREST:Sensor xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sosREST="http:
             swe:value = featureOfInterestType
     sml:inputs
       sml:InputList
-        sml:input name="precipitation"
-          swe:ObservableProperty definition="urn:ogc:def:property:OGC:1.0:precipitation"
+        sml:input name=observablePropertyName
+          swe:ObservableProperty definition=observableProperty
     sml:outputs
       sml:OutputList
-        sml:output name="precipitation"
-          swe:Quantity definition="urn:ogc:def:property:OGC:1.0:precipitation"
+        sml:output name=observablePropertyName
+          swe:Quantity definition=observableProperty
             swe:uom code="mm"
