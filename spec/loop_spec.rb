@@ -6,17 +6,17 @@ describe Redch::Loop do
   end
 
   describe '#new', :new => true do
-    it "takes a time interval and returns a Redch::Loop instance" do
+    it "takes a time period (in seconds) and returns a Redch::Loop instance" do
       expect(@loop).to be_an_instance_of Redch::Loop
     end
 
-    it "raises if interval is not specified" do
+    it "raises if period is not specified" do
       expect { Redch::Loop.new }.to raise_error(ArgumentError)
     end
   end
 
   describe '#start', :start => true do
-    it "executes the block each interval" do
+    it "executes the block each period" do
       i = 0
       n = 3
       @loop.start { 

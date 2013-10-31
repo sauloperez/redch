@@ -1,15 +1,15 @@
 require 'eventmachine'
 
 class Redch::Loop
-  def initialize(interval)
-    raise ArgumentError.new("the time interval must be especified") if interval.nil?
-    @interval = interval
+  def initialize(period)
+    raise ArgumentError.new("the time period must be especified") if period.nil?
+    @period = period # seconds
   end
 
   def start(&block)
     EventMachine.run do
 
-      EventMachine.add_periodic_timer(@interval) do
+      EventMachine.add_periodic_timer(@period) do
         begin
           yield
         rescue StandardError => e
