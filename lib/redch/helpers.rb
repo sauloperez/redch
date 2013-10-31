@@ -18,14 +18,13 @@ module Redch
       (1..6).map { "%0.2X"%rand(256) }.join(':')
     end
 
-    def print_and_flush(str)
-      print str
-      $stdout.flush
-    end
-
     def delete_config_file
       filename = Redch::Config.filename
       File.delete(filename) if File.exist?(filename)
+    end
+
+    def put_coords(coords)
+     "(" << "%.5f" % coords[0] << ", " << "%.5f" % coords[1] << ")"
     end
   end
 end

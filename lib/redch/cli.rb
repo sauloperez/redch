@@ -9,6 +9,7 @@ require 'random-location'
 
 class Redch::CLI < Thor
   include Thor::Actions
+  include Redch::Helpers
 
   def initialize(*args)
     super
@@ -16,17 +17,28 @@ class Redch::CLI < Thor
   end
 
   desc "setup", "Sets up the environment to enable the use of the device"
+  option :coordinates, :aliases => :c
   def setup
-    setup = Redch::Setup.new
-    setup.location= RandomLocation.near_by(41.65038, 1.13897, 5_000)
+    location = nil
+    if options[:coordinates]
+      location = options[:coordinates].gsub(/\s+/, "").split(",")
+    else
+      location = RandomLocation.near_by(41.65038, 1.13897, 90_000)
+    end
+
+    @setup = Redch::Setup.new
+    @setup.location= location
 
     # It's the only way to not mess up the yaml
     # and avoid a Psych::BadAlias exception
-    id = Mac.addr.dup 
-    setup.device_id= id
+    @setup.device_id= Mac.addr.dup
 
-    say("Registering device...")
-    setup.run
+    if !@setup.done?
+      say("Registering device #{@setup.device_id}...") 
+    else
+      say("Device #{@setup.device_id} already registered")
+    end
+    @setup.run
   end
 
   desc "simulate", "Simulate a sensor generating kWh sensor data samples"
@@ -37,7 +49,7 @@ class Redch::CLI < Thor
     simulate = Redch::Simulate.new(config.sos.device_id, config.sos.location)
     simulate.period= options[:period] if options[:period]
 
-    say("Sending an observation every #{simulate.period} seconds...")
+    say("Sending an observation from #{put_coords(@setup.location)} every #{simulate.period} seconds...\n\n")
     simulate.run do |value|
       say("Observation with value #{value} sent")
     end
