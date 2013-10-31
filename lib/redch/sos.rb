@@ -92,9 +92,7 @@ module Redch
         yield resource.post payload, self.class.headers
       rescue RestClient::RequestFailed => e
         message = ""
-
-        puts "failed_request = #{e.inspect}"
-
+        
         case e.http_code
         when 400
           message = "SOS Bad Request"

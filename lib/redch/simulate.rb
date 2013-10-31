@@ -6,30 +6,28 @@ require 'eventmachine'
 class Redch::Simulate
   include Redch::Helpers
 
-  def initialize(mean = 0.1, dev = 0.1, interval = 2)
+  # CHECK IT (MOVE IT TO CLI)
+  def initialize(device_id, location, mean = 0.1, dev = 0.1, period = 2)
+    @device_id = device_id
+    @location = location
+
     @mean = mean
     @dev = dev
-    @interval = interval
+    @period = period
 
-    setup = Redch::Setup.new
-    if !setup.done?
-      puts "Registering device..."
-      setup.run
-    end
-
-    @device_id = Redch::Config.load.sos.device_id
     @sos_client = Redch::SOS::Client.new
-    @loop = Redch::Loop.new(@interval)
+    @loop = Redch::Loop.new(@period)
   end
 
-  def run
-    puts "Sending an observation every #{@interval} seconds...\n\n"
+  def sos_client=(sos_client)
+    @sos_client = sos_client
+  end
 
+  def run(&block)
     @loop.start do
-      value = generate_value.round(3)
       begin
-        @sos_client.post_observation observation(value)
-        puts "Observation with value #{value} sent"
+        send_generated_value
+        yield if block_given?
       rescue Exception => e
         puts e.message
         @loop.stop
@@ -37,10 +35,14 @@ class Redch::Simulate
     end
   end
 
+  def stop
+    @loop.stop
+  end
+
   def observation(value)
     {
       sensor: @device_id,
-      samplingPoint: '54.9 10.52',
+      samplingPoint: @location.join(' '),
       observedProperty: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
       featureOfInterest: "http://www.redch.org/test/featureOfInterest/#{@device_id}",
       result: value,
@@ -60,7 +62,13 @@ class Redch::Simulate
       value += var
     else
       # Don't allow negative values
-      value = [value - var, 0].max
+      value = [value - var, 0.0].max
     end
+  end
+
+  private
+  def send_generated_value
+    value = generate_value.round(3)
+    @sos_client.post_observation observation(value)
   end
 end

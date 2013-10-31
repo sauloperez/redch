@@ -22,5 +22,10 @@ module Redch
       print str
       $stdout.flush
     end
+
+    def delete_config_file
+      filename = Redch::Config.filename
+      File.delete(filename) if File.exist?(filename)
+    end
   end
 end

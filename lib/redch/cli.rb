@@ -5,10 +5,10 @@ require 'redch/setup'
 require 'redch/simulate'
 require 'thor'
 require 'macaddr'
-require 'yaml'
-require 'pp'
+require 'random-location'
 
 class Redch::CLI < Thor
+  include Thor::Actions
 
   def initialize(*args)
     super
@@ -17,12 +17,22 @@ class Redch::CLI < Thor
 
   desc "setup", "Sets up the environment to enable the use of the device"
   def setup
-    Redch::Setup.new.run
+    setup = Redch::Setup.new
+    setup.location= RandomLocation.near_by(41.65038, 1.13897, 5_000)
+    setup.device_id= Mac.addr
+
+    say("Registering device...")
+    setup.run
   end
 
   desc "simulate", "Simulate a sensor generating kWh sensor data samples"
   def simulate
-    Redch::Simulate.new.run
+    setup
+    config = Redch::Config.load
+    simulate = Redch::Simulate.new(config.sos.device_id, config.sos.location)
+
+    say("Sending an observation every #{} seconds...")
+    simulate.run
   end
 
   # Methods not listed as commands
