@@ -2,13 +2,15 @@ require 'hashr'
 
 class Redch::Config
   def self.load
-    Hashr.new YAML.load(File.open(filename, "r"))
+    yaml = YAML::load_file(File.open(filename, "r"))
+    Hashr.new(yaml)
   rescue Errno::ENOENT
     raise StandardError.new
   end
 
   def self.save(config)
-    File.open(filename, 'w') { |f| f.write(config.to_hash.to_yaml) }
+    hash = config.to_hash
+    File.open(filename, 'w') { |f| f.write(hash.to_yaml) }
   end
 
   def self.filename

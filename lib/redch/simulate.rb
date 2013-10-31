@@ -6,6 +6,8 @@ require 'eventmachine'
 class Redch::Simulate
   include Redch::Helpers
 
+  attr_accessor :period
+
   # CHECK IT (MOVE IT TO CLI)
   def initialize(device_id, location, mean = 0.1, dev = 0.1, period = 2)
     @device_id = device_id
@@ -19,15 +21,12 @@ class Redch::Simulate
     @loop = Redch::Loop.new(@period)
   end
 
-  def sos_client=(sos_client)
-    @sos_client = sos_client
-  end
-
   def run(&block)
     @loop.start do
       begin
-        send_generated_value
-        yield if block_given?
+        value = generate_value.round(3)
+        @sos_client.post_observation observation(value)
+        yield(value) if block_given?
       rescue Exception => e
         puts e.message
         @loop.stop
@@ -37,6 +36,10 @@ class Redch::Simulate
 
   def stop
     @loop.stop
+  end
+
+  def sos_client=(sos_client)
+    @sos_client = sos_client
   end
 
   def observation(value)
@@ -64,11 +67,5 @@ class Redch::Simulate
       # Don't allow negative values
       value = [value - var, 0.0].max
     end
-  end
-
-  private
-  def send_generated_value
-    value = generate_value.round(3)
-    @sos_client.post_observation observation(value)
   end
 end

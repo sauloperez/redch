@@ -19,7 +19,11 @@ class Redch::CLI < Thor
   def setup
     setup = Redch::Setup.new
     setup.location= RandomLocation.near_by(41.65038, 1.13897, 5_000)
-    setup.device_id= Mac.addr
+    
+    # It's the only way to not mess up the yaml
+    # and avoid a Psych::BadAlias exception
+    id = Mac.addr.dup 
+    setup.device_id= id
 
     say("Registering device...")
     setup.run
@@ -31,8 +35,10 @@ class Redch::CLI < Thor
     config = Redch::Config.load
     simulate = Redch::Simulate.new(config.sos.device_id, config.sos.location)
 
-    say("Sending an observation every #{} seconds...")
-    simulate.run
+    say("Sending an observation every #{simulate.period} seconds...")
+    simulate.run do |value|
+      say("Observation with value #{value} sent")
+    end
   end
 
   # Methods not listed as commands
