@@ -9,7 +9,7 @@ class Redch::Simulate
   attr_accessor :period
 
   # CHECK IT (MOVE IT TO CLI)
-  def initialize(device_id, location, mean = 0.1, dev = 0.1, period = 2)
+  def initialize(device_id, location, period = 2, mean = 0.1, dev = 0.1)
     @device_id = device_id
     @location = location
 
