@@ -3,9 +3,9 @@
 # System update and install common libraries
 cd
 sudo apt-get update
-sudo apt-get install build-essential libreadline-dev libssl-dev zlib1g-dev libxml2-dev libxslt1-dev
-sudo apt-get install curl
-sudo apt-get install git-core git
+sudo apt-get install -y build-essential libreadline-dev libssl-dev zlib1g-dev libxml2-dev libxslt1-dev
+sudo apt-get install -y curl
+sudo apt-get install -y git-core git
 
 # Install RVM
 \curl -L https://get.rvm.io | sudo bash -s stable --autolibs=3 --ruby=1.9.3
