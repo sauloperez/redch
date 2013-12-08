@@ -75,8 +75,8 @@ module Redch
           observationType: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
           featureOfInterest: "http://www.redch.org/test/featureOfInterest/#{id}",
           featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint',
-          observablePropertyName: 'SolarPower',
-          observableProperty: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#SolarEnergy'
+          observablePropertyName: 'Photovoltaics',
+          observableProperty: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics'
         }
       end
 
