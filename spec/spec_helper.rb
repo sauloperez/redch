@@ -5,6 +5,7 @@ require_relative '../lib/redch/config.rb'
 require_relative '../lib/redch/loop.rb'
 require_relative '../lib/redch/simulate.rb'
 
+require 'webmock/rspec'
 require 'yaml'
 
 RSpec.configure do |config|

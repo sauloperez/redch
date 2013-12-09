@@ -11,3 +11,7 @@ gem "slim", "~> 2.0.1", :require => 'slim/logic_less'
 gem "foreman"
 gem "macaddr", "~> 1.6.1"
 gem "hashr", "~> 0.0.22"
+
+group :test do
+  gem "webmock"
+end

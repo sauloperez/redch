@@ -9,32 +9,21 @@ describe Redch::SOS::Client::Sensor do
     )
   }
 
-  it 'has a default base_uri' do
-    expect(sensor.base_uri).to eq 'http://localhost:8080/webapp/sos/'
-  end
-
-  describe '#new' do
-    it "takes a Hash parameter" do
-      expect(sensor.params).to be_kind_of(Hash)
-    end
-
-    it "requires the 'namespace' parameter" do
-      expect(sensor.params[:namespace]).to eq 'http://www.redch.org/'
-    end
-
-    it "requires the 'intended_app' parameter" do
-      expect(sensor.params[:intended_app]).to eq 'energy'
-    end
-  end
-
   describe '#create' do
     let(:id) { Time.now.getutc.to_i }
-    let(:sensor_id) {
-      sensor.create(id)
+    before { 
+      sensor.create(
+        id: id,
+        sensor_type: "in-situ",
+        observation_type: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
+        foi_type: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint',
+        observable_prop_name: 'Photovoltaics',
+        observable_prop: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics'
+      )
     }
 
-    it "returns the sensor id" do
-      expect(sensor_id).to eq id
+    it "assigns the sensor id" do
+      expect(sensor.id).to eq id
     end
   end
 end
