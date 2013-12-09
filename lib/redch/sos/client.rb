@@ -1,10 +1,9 @@
 require 'client/resource'
 require 'client/sensor'
 require 'client/observation'
+require 'client/error'
 
 # TODO Move requires deeper
-require 'redch/error'
-require 'rest_client'
 require 'logger'
 require 'nokogiri'
 require 'nori'

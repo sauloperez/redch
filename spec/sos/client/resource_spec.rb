@@ -30,14 +30,14 @@ describe Redch::SOS::Client::Resource do
     let(:payload) { 'foo=bar' }
     let(:sos_resource) { '/foo' }
 
+    before { 
+      stub_request(:post, "#{resource.base_uri}#{sos_resource}").
+        to_return(:status => 200)
+    }
+
     it "issues a request to a resource" do
       resource.http_post(sos_resource)
       expect(sos_resource).to be_kind_of(String)      
-    end
-
-    it "issues an HTTP POST request" do
-      stub_request(:post, "http://localhost:8080/webapp/sos#{sos_resource}")
-      resource.http_post(sos_resource)
     end
 
     it "accepts a payload" do
@@ -59,5 +59,17 @@ describe Redch::SOS::Client::Resource do
       end
     end
 
+    context "when there's an HTTP error" do
+      before { 
+        stub_request(:post, "#{resource.base_uri}#{sos_resource}").
+          to_return(:status => 400)
+      }
+
+      it "raises" do 
+        expect{ 
+          resource.http_post(sos_resource, payload)
+        }.to raise_error(Redch::SOS::Client::Error)
+      end
+    end
   end
 end
