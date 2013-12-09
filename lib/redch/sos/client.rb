@@ -15,7 +15,7 @@ module Redch
 
     module Client
       VERSION = '0.1.0'
-      URI = 'http://localhost:8080/webapp/sos'
+      URI = 'http://localhost:8080/webapp/sos/rest'
     end
 
   end

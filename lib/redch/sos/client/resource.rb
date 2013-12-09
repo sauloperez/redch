@@ -7,7 +7,10 @@ module Redch::SOS
       attr_reader :id
       attr_accessor :params, :headers
 
+      @@resource_paths = {}
+
       def initialize(options = {})
+        @parser = Nori.new
         @params = options
         @headers = {
           content_type: "application/gml+xml",
@@ -15,14 +18,23 @@ module Redch::SOS
         }
       end
 
+      def self.resource(path = nil)
+        @@resource_paths[self] = base_uri + path
+      end
+
+      def self.base_uri
+        URI
+      end
+
       def base_uri
         URI
       end
 
-      def http_post(sos_resource, payload = nil, &block)
-        resource = RestClient::Resource.new(base_uri + sos_resource)
+      def http_post(payload = nil, &block)
+        resource = RestClient::Resource.new(@@resource_paths[self.class])
         response = resource.post(payload, headers)
-        yield response if block_given?
+        parsed_body = @parser.parse response.body
+        yield parsed_body if block_given?
       rescue RestClient::RequestFailed => e
         case e.http_code
           when 400      then raise Client::BadRequest
