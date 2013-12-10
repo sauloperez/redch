@@ -12,22 +12,22 @@ describe Redch::SOS::Client::Resource do
   let(:path) { '/foo' }
 
   # Set up a new resource to test with
-  before(:all) {
+  before(:all) do
     class Foo < Redch::SOS::Client::Resource
       resource '/foo'
     end
-  }
+  end
 
   its(:base_uri) { should eq 'http://localhost:8080/webapp/sos/rest' }
 
   describe '#http_post' do
     let(:payload) { 'foo=bar' }
 
-    before {
+    before do
       stub_request(:post, "http://localhost:8080/webapp/sos/rest/foo").
         with(body: payload).
         to_return(:status => 200)
-    }
+    end
 
     it "accepts a payload" do
       foo.http_post(payload)
