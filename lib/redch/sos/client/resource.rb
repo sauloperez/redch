@@ -1,7 +1,6 @@
 require 'client'
-require 'rest_client'
-# require 'nokogiri'
 require 'nori'
+require 'rest_client'
 
 module Redch::SOS
   module Client
