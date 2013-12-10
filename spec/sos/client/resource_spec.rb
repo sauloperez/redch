@@ -37,10 +37,17 @@ describe Redch::SOS::Client::Resource do
         resource '/foo'
       end
       foo = Foo.new
+    }
 
+    before {
       stub_request(:post, "http://localhost:8080/webapp/sos/rest/foo").
+        with(body: payload).
         to_return(:status => 200)
     }
+
+    it "issues a request to a resource" do
+      expect(Foo.resource).to be_kind_of(String)
+    end
 
     it "accepts a payload" do
       foo.http_post(payload)
@@ -48,7 +55,7 @@ describe Redch::SOS::Client::Resource do
     end
 
     context "when an implicit block is passed in" do
-      before { 
+      before {
         stub_request(:post, "#{foo.base_uri}#{path}").
           with(body: payload).
           to_return(:status => 200)
@@ -68,13 +75,13 @@ describe Redch::SOS::Client::Resource do
     end
 
     context "when there's an HTTP error" do
-      before { 
+      before {
         stub_request(:post, "#{foo.base_uri}#{path}").
           to_return(:status => 400)
       }
 
-      it "raises" do 
-        expect{ 
+      it "raises" do
+        expect{
           foo.http_post(payload)
         }.to raise_error(Redch::SOS::Client::Error)
       end

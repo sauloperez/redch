@@ -19,6 +19,7 @@ module Redch::SOS
       end
 
       def self.resource(path = nil)
+        return @@resource_paths[self] if path.nil?
         @@resource_paths[self] = base_uri + path
       end
 
