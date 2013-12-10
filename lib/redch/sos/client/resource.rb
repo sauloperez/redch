@@ -1,17 +1,20 @@
 require 'client'
 require 'rest_client'
+# require 'nokogiri'
+require 'nori'
 
 module Redch::SOS
   module Client
 
     class Resource
+      include Helpers
+
       attr_reader :id
       attr_accessor :params, :headers
 
       @@resource_paths = {}
 
       def initialize(options = {})
-        @parser = Nori.new
         @params = options
         @headers = {
           content_type: "application/gml+xml",
@@ -35,9 +38,10 @@ module Redch::SOS
       def http_post(payload = nil, &block)
         path = base_uri + @@resource_paths[self.class]
         resource = RestClient::Resource.new(path)
+        parser = Nori.new
 
         response = resource.post(payload, headers)
-        parsed_body = @parser.parse response.body
+        parsed_body = parser.parse response.body
 
         yield parsed_body if block_given?
       rescue RestClient::RequestFailed => e

@@ -15,12 +15,17 @@ describe Redch::SOS::Client::Observation do
 
   describe '#create' do
     before {
+      stub_request(:post, "http://localhost:8080/webapp/sos/rest/observations").
+         with(:body => {"featureOfInterest"=>"http://www.redch.org/featureOfInterest/23", "observedProperty"=>"http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel", "offering"=>"http://www.redch.org/offering/23", "phenomenonTime"=>"2013-01-01T00:00:00+01:00", "result"=>"22", "resultTime"=>"2013-01-01T00:00:00+01:00", "samplingPoint"=>"1 2", "sensor"=>"23"},
+              :headers => {'Accept'=>'application/gml+xml', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'347', 'Content-Type'=>'application/x-www-form-urlencoded', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "", :headers => {})
+
       observation.create(
-        sensor_id: Time.now.getutc.to_i.to_s,
+        sensor_id: "23",
         location: [1,2],
         observed_prop: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
         result: 22,
-        time: Time.now
+        time: Time.new(2013)
       )
     }
 

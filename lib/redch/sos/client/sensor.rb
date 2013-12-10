@@ -30,7 +30,11 @@ module Redch::SOS
       end
 
       def post_sensor(sensor)
-        sensor[:uniqueID]
+        http_post(sensor) do |body|
+          return sensor[:uniqueID]
+        end
+      rescue Exception => e
+        raise e
       end
     end
 

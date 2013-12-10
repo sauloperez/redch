@@ -27,7 +27,11 @@ module Redch::SOS
       end
 
       def post_observation(observation)
-        observation[:sensor] + Time.now.to_s
+        http_post(observation) do |body|
+          return observation[:sensor]
+        end
+      rescue Exception => e
+        raise e
       end
     end
 

@@ -1,14 +1,8 @@
+require 'client/helpers'
 require 'client/resource'
 require 'client/sensor'
 require 'client/observation'
 require 'client/error'
-
-# TODO Move requires deeper
-require 'logger'
-require 'nokogiri'
-require 'nori'
-require 'slim/logic_less'
-require 'yaml'
 
 module Redch
   module SOS
