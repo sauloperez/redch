@@ -2,11 +2,9 @@ module Redch::SOS
   module Client
 
     class Sensor < Resource
-      DATE_FORMAT = "%Y-%m-%d"
+      resource '/sensors'
 
-      def initialize(options = {})
-        super(options)
-      end
+      DATE_FORMAT = "%Y-%m-%d"
 
       def create(options)
         @id = post_sensor sensor(options)

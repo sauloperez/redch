@@ -1,3 +1,4 @@
+require 'client'
 require 'rest_client'
 
 module Redch::SOS
@@ -20,7 +21,7 @@ module Redch::SOS
 
       def self.resource(path = nil)
         return @@resource_paths[self] if path.nil?
-        @@resource_paths[self] = base_uri + path
+        @@resource_paths[self] = path
       end
 
       def self.base_uri
@@ -32,9 +33,12 @@ module Redch::SOS
       end
 
       def http_post(payload = nil, &block)
-        resource = RestClient::Resource.new(@@resource_paths[self.class])
+        path = base_uri + @@resource_paths[self.class]
+        resource = RestClient::Resource.new(path)
+
         response = resource.post(payload, headers)
         parsed_body = @parser.parse response.body
+
         yield parsed_body if block_given?
       rescue RestClient::RequestFailed => e
         case e.http_code

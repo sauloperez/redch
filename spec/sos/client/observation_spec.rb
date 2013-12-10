@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Redch::SOS::Client::Observation do
+  subject { Redch::SOS::Client::Observation }
 
   let(:observation) {
     Redch::SOS::Client::Observation.new(
@@ -9,8 +10,11 @@ describe Redch::SOS::Client::Observation do
     )
   }
 
+  its(:resource) { should be_kind_of(String) }
+  its(:base_uri) { should_not be_nil }
+
   describe '#create' do
-    before { 
+    before {
       observation.create(
         sensor_id: Time.now.getutc.to_i.to_s,
         location: [1,2],
@@ -20,7 +24,7 @@ describe Redch::SOS::Client::Observation do
       )
     }
 
-    it "assigns the observation id" do
+    it "should assign the observation id" do
       expect(observation.id).to be_kind_of(String)
     end
   end

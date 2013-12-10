@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Redch::SOS::Client::Sensor do
+  subject { Redch::SOS::Client::Sensor }
 
   let(:sensor) {
     Redch::SOS::Client::Sensor.new(
@@ -9,9 +10,12 @@ describe Redch::SOS::Client::Sensor do
     )
   }
 
+  its(:resource) { should be_kind_of(String) }
+  its(:base_uri) { should_not be_nil }
+
   describe '#create' do
     let(:id) { Time.now.getutc.to_i }
-    before { 
+    before {
       sensor.create(
         id: id,
         sensor_type: "in-situ",
@@ -22,7 +26,7 @@ describe Redch::SOS::Client::Sensor do
       )
     }
 
-    it "assigns the sensor id" do
+    it "should assign the sensor id" do
       expect(sensor.id).to eq id
     end
   end

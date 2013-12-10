@@ -2,11 +2,9 @@ module Redch::SOS
   module Client
 
     class Observation < Resource
-      TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%:z"
+      resource '/observations'
 
-      def initialize(options = {})
-        super(options)
-      end
+      TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%:z"
 
       def create(options)
         @id = post_observation observation(options)

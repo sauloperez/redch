@@ -1,53 +1,39 @@
 require 'spec_helper'
 
 describe Redch::SOS::Client::Resource do
-  let(:resource) {
+  subject {
     Redch::SOS::Client::Resource.new(
       namespace: 'http://www.redch.org/',
       intended_app: 'energy'
     )
   }
 
-  it 'has a default base_uri' do
-    expect(resource.base_uri).to eq 'http://localhost:8080/webapp/sos/rest'
-  end
+  let(:foo) { Foo.new }
+  let(:path) { '/foo' }
+
+  # Set up a new resource to test with
+  before(:all) {
+    class Foo < Redch::SOS::Client::Resource
+      resource '/foo'
+    end
+  }
+
+  its(:base_uri) { should eq 'http://localhost:8080/webapp/sos/rest' }
 
   describe '#new' do
-    it "takes a Hash parameter" do
-      expect(resource.params).to be_kind_of(Hash)
-    end
-
-    it "requires the 'namespace' parameter" do
-      expect(resource.params[:namespace]).to eq 'http://www.redch.org/'
-    end
-
-    it "requires the 'intended_app' parameter" do
-      expect(resource.params[:intended_app]).to eq 'energy'
-    end
+    its(:params) { should be_kind_of(Hash) }
+    its(:params) { should include :namespace }
+    its(:params) { should include :intended_app }
   end
 
   describe '#http_post' do
     let(:payload) { 'foo=bar' }
-    let(:foo) { Foo.new }
-    let(:path) { '/foo' }
-
-    before(:all) {
-      # Set up a new resource
-      class Foo < Redch::SOS::Client::Resource
-        resource '/foo'
-      end
-      foo = Foo.new
-    }
 
     before {
       stub_request(:post, "http://localhost:8080/webapp/sos/rest/foo").
         with(body: payload).
         to_return(:status => 200)
     }
-
-    it "issues a request to a resource" do
-      expect(Foo.resource).to be_kind_of(String)
-    end
 
     it "accepts a payload" do
       foo.http_post(payload)
@@ -62,7 +48,9 @@ describe Redch::SOS::Client::Resource do
       }
 
       it "calls it" do
-        foo.http_post(payload) {}
+        called = false
+        foo.http_post(payload) { called = true }
+        expect(called).to be true
       end
 
       it "yields the HTTP response body" do
