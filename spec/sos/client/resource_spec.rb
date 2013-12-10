@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Redch::SOS::Client::Resource do
-  subject {
-    Redch::SOS::Client::Resource.new(
-      namespace: 'http://www.redch.org/',
-      intended_app: 'energy'
-    )
-  }
+  before do
+    Redch::SOS::Client.configure do |config|
+      config.namespace = 'foo'
+      config.intended_app = 'bar'
+    end
+  end
 
   let(:foo) { Foo.new }
   let(:path) { '/foo' }
@@ -19,12 +19,6 @@ describe Redch::SOS::Client::Resource do
   }
 
   its(:base_uri) { should eq 'http://localhost:8080/webapp/sos/rest' }
-
-  describe '#new' do
-    its(:params) { should be_kind_of(Hash) }
-    its(:params) { should include :namespace }
-    its(:params) { should include :intended_app }
-  end
 
   describe '#http_post' do
     let(:payload) { 'foo=bar' }

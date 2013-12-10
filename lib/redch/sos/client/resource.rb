@@ -9,12 +9,11 @@ module Redch::SOS
       include Helpers
 
       attr_reader :id
-      attr_accessor :params, :headers
+      attr_accessor :headers
 
       @@resource_paths = {}
 
       def initialize(options = {})
-        @params = options
         @headers = {
           content_type: "application/gml+xml",
           accept: "application/gml+xml"

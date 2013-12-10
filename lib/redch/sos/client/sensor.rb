@@ -12,11 +12,11 @@ module Redch::SOS
 
       private
       def sensor(options)
-        foi = "#{params[:namespace]}featureOfInterest/#{options[:id]}"
+        foi = "#{Client.configuration.namespace}featureOfInterest/#{options[:id]}"
         current_date = Time.now.strftime(DATE_FORMAT)
         {
           uniqueID: options[:id],
-          intendedApplication: params[:intended_app],
+          intendedApplication: Client.configuration.intended_app,
           sensorType: options[:sensor_type],
           beginPosition: current_date,
           # endPosition: '2009-01-20',

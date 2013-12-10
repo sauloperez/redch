@@ -1,20 +1,22 @@
 require 'spec_helper'
 
 describe Redch::SOS::Client::Sensor do
-  subject { Redch::SOS::Client::Sensor }
+  before do
+    Redch::SOS::Client.configure do |config|
+      config.namespace = 'http://www.redch.org/'
+      config.intended_app = 'energy'
+    end
+  end
 
-  let(:sensor) {
-    Redch::SOS::Client::Sensor.new(
-      namespace: 'http://www.redch.org/',
-      intended_app: 'energy'
-    )
-  }
+  subject { Redch::SOS::Client::Sensor }
 
   its(:resource) { should be_kind_of(String) }
   its(:base_uri) { should_not be_nil }
 
   describe '#create' do
     let(:id) { 11 }
+    let(:sensor) { subject.new }
+
     before {
       stub_request(:post, "http://localhost:8080/webapp/sos/rest/sensors").
          with(:body => {"beginPosition"=>"2013-12-10", "featureOfInterest"=>"http://www.redch.org/featureOfInterest/11", "featureOfInterestID"=>"http://www.redch.org/featureOfInterest/11", "featureOfInterestType"=>"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint", "intendedApplication"=>"energy", "observableProperty"=>"http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics", "observablePropertyName"=>"Photovoltaics", "observationType"=>"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", "sensorType"=>"in-situ", "uniqueID"=>"11"},

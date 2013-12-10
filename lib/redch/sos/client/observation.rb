@@ -12,8 +12,8 @@ module Redch::SOS
 
       private
       def observation(options)
-        foi = "#{params[:namespace]}featureOfInterest/#{options[:sensor_id]}"
-        offering = "#{params[:namespace]}offering/#{options[:sensor_id]}"
+        foi = "#{Client.configuration.namespace}featureOfInterest/#{options[:sensor_id]}"
+        offering = "#{Client.configuration.namespace}offering/#{options[:sensor_id]}"
         {
           sensor: options[:sensor_id],
           samplingPoint: options[:location].join(' '),
