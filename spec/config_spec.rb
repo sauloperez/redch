@@ -1,4 +1,4 @@
-require './spec_helper'
+require 'spec_helper'
 
 describe Redch::Config do
   let(:config) { Hashr.new('sos' => { 'a' => 'test' }) }
