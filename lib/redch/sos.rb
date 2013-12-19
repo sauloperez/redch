@@ -75,8 +75,8 @@ module Redch
           observationType: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
           featureOfInterest: "http://www.redch.org/test/featureOfInterest/#{id}",
           featureOfInterestType: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint',
-          observablePropertyName: 'SolarPanelEnergyProduction',
-          observableProperty: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel'
+          observablePropertyName: 'Photovoltaics',
+          observableProperty: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics'
         }
       end
 
@@ -92,7 +92,7 @@ module Redch
         yield resource.post payload, self.class.headers
       rescue RestClient::RequestFailed => e
         message = ""
-        
+
         case e.http_code
         when 400
           message = "SOS Bad Request"

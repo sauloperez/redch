@@ -21,6 +21,7 @@ class Redch::CLI < Thor
   def setup
     location = nil
     if options[:coordinates]
+      # Remove spaces an split it up
       location = options[:coordinates].gsub(/\s+/, "").split(",")
     else
       location = RandomLocation.near_by(41.65038, 1.13897, 90_000)
@@ -34,7 +35,7 @@ class Redch::CLI < Thor
     @setup.device_id= Mac.addr.dup
 
     if !@setup.done?
-      say("Registering device #{@setup.device_id}...") 
+      say("Registering device #{@setup.device_id}...")
     else
       say("Device #{@setup.device_id} already registered")
     end
@@ -55,7 +56,7 @@ class Redch::CLI < Thor
     end
   end
 
-  # Methods not listed as commands
+  # Methods not available as commands
   no_commands do
     # Handle the shut down gracefully.
     # Save state or whatever needed
