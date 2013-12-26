@@ -5,17 +5,19 @@ module Redch::SOS
 
     module Templates
 
-      def render(template_name)
+      def render(template_name, data = nil)
         begin
           template_name = template_name.to_sym
         rescue
           raise ArgumentError, "string or symbol expected"
         end
 
+        raise ArgumentError, "Hash expected" if !data.nil? and !data.is_a?(Hash)
+
         find_template(templates_folder, template_name) do |file|
           fd = File.open(file, "r").read
           template = Slim::Template.new { fd }
-          template.render
+          template.render(data)
         end
       end 
 
