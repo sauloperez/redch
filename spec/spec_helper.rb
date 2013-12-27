@@ -11,9 +11,22 @@ require 'yaml'
 
 RSpec.configure do |config|
   config.include Redch::Helpers
+  config.include Redch::SOS::Client::Templates
 
   config.expect_with :rspec do |c|
     # disable the 'should' syntax
     c.syntax = :expect
   end
+end
+
+def mock_template_file(name, content)
+  filename = File.join(settings.templates_folder, "#{name.to_s}.#{settings.extension}")
+  File.open(filename, 'w') do |file|
+    file.puts content
+  end
+end
+
+def delete_template_file(name)
+  filename = File.join(settings.templates_folder, "#{name.to_s}.#{settings.extension}")
+  File.delete(filename)
 end
