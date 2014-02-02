@@ -34,7 +34,11 @@ describe Redch::SOS::Client::Resource do
                     :headers => {'Accept'=>'application/gml+xml', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'20', 'Content-Type'=>'application/gml+xml', 'User-Agent'=>'Ruby'})
     end
 
-    it "sends the payload" do
+    after :all do
+      delete_template_file(:post_foo)
+    end
+
+    it 'sends the payload' do
       allow(response).to receive(:body).and_return('')
       expect_any_instance_of(RestClient::Resource).to receive(:post).with(rendered_template, headers).and_return(response)
 
@@ -46,14 +50,14 @@ describe Redch::SOS::Client::Resource do
       foo.http_post(data)
     end
 
-    context "when an implicit block is passed in" do
-      it "calls it" do
+    context 'when an implicit block is passed in' do
+      it 'calls it' do
         called = false
         foo.http_post(data) { called = true }
         expect(called).to be true
       end
 
-      it "yields the HTTP response body" do
+      it 'yields the HTTP response body' do
         body = nil
         foo.http_post(data) do |b|
           body = b
@@ -68,7 +72,7 @@ describe Redch::SOS::Client::Resource do
           to_return(:status => 400)
       }
 
-      it "raises" do
+      it 'raises' do
         expect{
           foo.http_post(data)
         }.to raise_error(Redch::SOS::Client::Error)
