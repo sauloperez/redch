@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe Redch::SOS::Client do
   subject { Redch::SOS::Client }
+
   before { subject.configure }
+
+  let(:intended_app) { 'weather' }
+  let(:namespace) { 'weather.cat' }
 
   its(:configuration) { should respond_to :namespace }
   its(:configuration) { should respond_to :namespace= }
@@ -12,33 +16,15 @@ describe Redch::SOS::Client do
   context "when a block is provided" do
     let(:configuration) { subject.configuration }
 
-    context "when namespace is specified" do
-      let(:namespace) { 'weather.cat' }
-
-      before do
-        subject.configure do |config|
-          config.namespace = namespace
-        end
-      end
-
-      it "returns the configured value" do
-        expect(configuration.namespace).to eq namespace
-      end
+    it "returns the configured namespace" do
+      subject.configure { |config| config.namespace = namespace }
+      expect(configuration.namespace).to eq namespace
     end
 
-    context "when intended_app is specified" do
-      let(:intended_app) { 'weather' }
-
-      before do
-        subject.configure do |config|
-          config.intended_app = intended_app
-        end
-      end
-
-      it "returns the configured value" do
-        expect(configuration.intended_app).to eq intended_app
-      end
+    it "returns the configured value" do
+      subject.configure { |config| config.intended_app = intended_app }
+      expect(configuration.intended_app).to eq intended_app
     end
-
   end
+
 end
