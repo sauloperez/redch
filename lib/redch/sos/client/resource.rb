@@ -1,12 +1,14 @@
 require 'client'
 require 'nori'
 require 'rest_client'
+require_relative 'templates'
 
 module Redch::SOS
   module Client
 
     class Resource
       include Helpers
+      include Redch::SOS::Client::Templates
 
       attr_reader :id
       attr_accessor :headers
@@ -14,6 +16,7 @@ module Redch::SOS
       @@resource_paths = {}
 
       def initialize(options = {})
+        @parser = Nori.new
         @headers = {
           content_type: "application/gml+xml",
           accept: "application/gml+xml"
@@ -33,15 +36,40 @@ module Redch::SOS
         URI
       end
 
-      def http_post(payload = nil, &block)
-        path = base_uri + @@resource_paths[self.class]
-        resource = RestClient::Resource.new(path)
-        parser = Nori.new
+      def resource_name
+        @@resource_paths[self.class]
+      end
 
-        response = resource.post(payload, headers)
-        parsed_body = parser.parse response.body
+      # Returns a symbol compound of HTTP method and resource name
+      #
+      # @param [Symbol] instance method name with the form `http_<HTTP_method>`
+      # @return [Symbol] <HTTP_method>_<resource_name>
+      def template_name(method)
+        http_method = method.to_s.match(/([^_]+)$/)[0]
+        rest_name = resource_name.to_s.match(/([^\/]+)$/)[0]
 
-        yield parsed_body if block_given?
+        "#{http_method}_#{rest_name}".to_sym
+      end
+
+      def http_post(data, &block)
+        http_request do
+          path = base_uri + resource_name
+          rest_resource = RestClient::Resource.new(path)
+
+          template = template_name(__method__)
+          payload = render(template, data)
+
+          response = rest_resource.post(payload, headers)
+          parsed_body = @parser.parse response.body
+
+          yield parsed_body if block_given?
+        end
+      end
+
+      protected
+
+      def http_request
+        yield
       rescue RestClient::RequestFailed => e
         case e.http_code
           when 400      then raise Client::BadRequest
@@ -50,6 +78,7 @@ module Redch::SOS
           else raise Client::Error
         end
       end
+
     end
 
   end
