@@ -25,22 +25,21 @@ module Redch::SOS
             raise ArgumentError, "String or Symbol expected"
           end
 
-          raise ArgumentError, "Hash expected" if !data.nil? and !data.is_a?(Hash)
+          raise ArgumentError, "Hash expected" unless data.nil? || data.is_a?(Hash)
 
-          find_template(settings.templates_folder, template_name) do |file|
-            template = compile_template(file)
+          find(settings.templates_folder, template_name) do |file|
+            template = compile(file)
             template.render(data)
           end
         end
 
-        def find_template(folder, name)
+        def find(folder, name)
           yield File.join(folder, "#{name}.#{settings.extension}")
         end
 
-        def compile_template(file)
-          fd = File.open(file, "r").read
-          template = Slim::Template.new { fd }
-          template
+        def compile(file)
+          content = File.open(file, "r").read
+          Slim::Template.new { content }
         end
       end
 
@@ -51,3 +50,4 @@ module Redch::SOS
 
   end
 end
+
