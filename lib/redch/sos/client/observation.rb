@@ -7,7 +7,8 @@ module Redch::SOS
       TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%:z"
 
       def create(options)
-        @id = post_observation observation(options)
+        id = post observation(options)
+        @id = id.to_i
       end
 
       private
@@ -26,9 +27,9 @@ module Redch::SOS
         }
       end
 
-      def post_observation(observation)
+      def post(observation)
         http_post(observation) do |body|
-          return observation[:sensor]
+          body['sosREST:Observation']['sosREST:link']
         end
       rescue Exception => e
         raise e
