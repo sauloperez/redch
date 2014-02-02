@@ -7,7 +7,8 @@ module Redch::SOS
       DATE_FORMAT = "%Y-%m-%d"
 
       def create(options)
-        @id = post_sensor sensor(options)
+        id = post sensor(options)
+        @id = id.to_i
       end
 
       private
@@ -29,9 +30,11 @@ module Redch::SOS
         }
       end
 
-      def post_sensor(sensor)
+      def post(sensor)
         http_post(sensor) do |body|
-          return sensor[:uniqueID]
+          body['sosREST:Sensor']['sosREST:link'].each do |link|
+            return last_segment(link['@href']) if last_segment(link['@rel']) == 'self'
+          end
         end
       rescue Exception => e
         raise e

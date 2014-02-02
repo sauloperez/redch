@@ -26,5 +26,9 @@ module Redch
     def put_coords(coords)
      "(" << "%.5f" % coords[0] << ", " << "%.5f" % coords[1] << ")"
     end
+
+    def last_segment(uri)
+      uri.match(/([^\/]+$)/)[0]
+    end
   end
 end
