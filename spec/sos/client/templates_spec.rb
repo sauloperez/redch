@@ -5,6 +5,7 @@ describe Redch::SOS::Client::Templates do
   let(:data) { {name: 'test'} }
   let(:dummy_folder) { "/dummy_template_folder" }
   let(:dummy_extension) { "dum" }
+  let(:default_template_folder) { File.expand_path('lib/redch/sos/client/templates', Dir.pwd) }
 
   before :all do
     class DummyClass
@@ -21,7 +22,7 @@ describe Redch::SOS::Client::Templates do
   end
 
   it 'has a default template folder' do
-    expect(dummy.settings.templates_folder).to eq "/Users/Pau/Sites/pfc-sources/redch/lib/redch/sos/client/templates"
+    expect(dummy.settings.templates_folder).to eq default_template_folder
   end
 
   it 'sets the template folder' do
