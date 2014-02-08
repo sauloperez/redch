@@ -17,12 +17,16 @@ describe Redch::SOS::Client do
     let(:configuration) { subject.configuration }
 
     it "returns the configured namespace" do
-      subject.configure { |config| config.namespace = namespace }
+      subject.configure do |config|
+        config.namespace = namespace
+      end
       expect(configuration.namespace).to eq namespace
     end
 
     it "returns the configured value" do
-      subject.configure { |config| config.intended_app = intended_app }
+      subject.configure do |config|
+        config.intended_app = intended_app
+      end
       expect(configuration.intended_app).to eq intended_app
     end
   end
