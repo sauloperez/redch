@@ -10,6 +10,7 @@ describe Redch::SOS::Client::Resource do
 
   let(:foo) { Foo.new }
   let(:path) { '/foo' }
+  let(:foo_header) { 'foo/bar' }
 
   # Set up a new resource to test with
   before(:all) do
@@ -19,6 +20,13 @@ describe Redch::SOS::Client::Resource do
   end
 
   its(:base_uri) { should eq 'http://localhost:8080/webapp/sos/rest' }
+
+  describe '#header' do
+    it 'allows to set up headers individually' do
+      foo.header :foo, foo_header
+      expect(foo.headers[:foo]).to eq foo_header
+    end
+  end
 
   describe '#http_post' do
     let(:data) { { value: 'blalala' } }

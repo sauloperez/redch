@@ -8,24 +8,25 @@ module Redch::SOS
 
     class Resource
       include Helpers
-      include Redch::SOS::Client::Templates
+      include Templates
 
-      attr_reader :id
-      attr_accessor :headers
-
-      @@resource_paths = {}
+      attr_reader :id, :headers
 
       def initialize(options = {})
         @parser = Nori.new
-        @headers = {
-          content_type: "application/gml+xml",
-          accept: "application/gml+xml"
-        }
+        header :accept, 'application/gml+xml'
+        header :content_type, 'application/gml+xml'
       end
 
       def self.resource(path = nil)
+        @@resource_paths ||= {}
         return @@resource_paths[self] if path.nil?
         @@resource_paths[self] = path
+      end
+
+      def header(name, value)
+        @headers ||= {}
+        @headers[name] = value
       end
 
       def self.base_uri
