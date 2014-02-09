@@ -4,8 +4,8 @@ class Redch::Config
   FILE_PATH = '~/.redch.yml'
 
   def self.load
-    yaml = YAML::load_file(File.open(filename, "r"))
-    Hashr.new(yaml)
+    hash = YAML::load_file(File.open(filename, "r"))
+    Hashr.new(hash)
   rescue Errno::ENOENT
     raise StandardError.new
   end
