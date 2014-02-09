@@ -1,6 +1,8 @@
 require 'hashr'
 
 class Redch::Config
+  FILE_PATH = '~/.redch.yml'
+
   def self.load
     yaml = YAML::load_file(File.open(filename, "r"))
     Hashr.new(yaml)
@@ -14,6 +16,6 @@ class Redch::Config
   end
 
   def self.filename
-    @filename ||= File.expand_path('~/.redch.yml')
+    @filename ||= File.expand_path(FILE_PATH)
   end
 end
