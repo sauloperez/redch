@@ -18,8 +18,8 @@ describe Redch::Loop do
   describe '#start', :start => true do
     it "executes the block each period" do
       i = 0
-      n = 3
-      @loop.start { 
+      n = 1
+      @loop.start {
         if i < n
           i += 1
         else
@@ -29,9 +29,9 @@ describe Redch::Loop do
 
       expect(i).to eq(n)
     end
-    
+
     it "raises and stops when the block raises" do
-      expect { 
+      expect {
         @loop.start {
           raise StandardError.new
         }
