@@ -6,8 +6,6 @@ class Redch::Config
   def self.load
     hash = YAML::load_file(File.open(filename, "r"))
     Hashr.new(hash)
-  rescue Errno::ENOENT
-    raise StandardError.new
   end
 
   def self.save(config)
