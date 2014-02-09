@@ -34,11 +34,12 @@ class Redch::CLI < Thor
     # and avoid a Psych::BadAlias exception
     @setup.device_id= Mac.addr.dup
 
-    if !@setup.done?
-      say("Registering device #{@setup.device_id}...")
-    else
+    if @setup.done?
       say("Device #{@setup.device_id} already registered")
+    else
+      say("Registering device #{@setup.device_id}...")
     end
+
     @setup.run
   end
 
