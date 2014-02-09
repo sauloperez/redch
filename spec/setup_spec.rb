@@ -5,6 +5,14 @@ describe Redch::Setup do
   let(:location) { [1.2, 2.1] }
   let(:required_fields) { [:id, :sensor_type, :observation_type, :foi_type, :observable_prop_name, :observable_prop] }
 
+  let(:file) { double 'file' }
+  let(:filename) { Redch::Config.filename }
+
+  before do
+    allow(File).to receive(:open).with(filename, 'w').and_yield(file)
+    allow(file).to receive(:write)
+  end
+
   describe '#new' do
     it 'configures the SOS client' do
       expect(Redch::SOS::Client).to receive(:configure)
@@ -67,7 +75,7 @@ describe Redch::Setup do
         end
 
         it 'stores the configuration on successful request' do
-          allow_any_instance_of(Redch::SOS::Client::Sensor).to receive(:create).and_return(device_id)
+          allow_any_instance_of(Redch::SOS::Client::Sensor).to receive(:create)
           expect(Redch::Config).to receive(:save).with(subject.config)
           subject.run
         end
@@ -77,14 +85,9 @@ describe Redch::Setup do
             allow_any_instance_of(Redch::SOS::Client::Sensor).to receive(:create).and_raise
           end
 
-          it 'outputs the error message' do
-            expect_any_instance_of(StandardError).to receive(:message)
-            subject.run
-          end
-
           it 'does not store the configuration' do
             expect(Redch::Config).to_not receive(:save)
-            subject.run
+            expect { subject.run }.to raise_error
           end
         end
 
@@ -109,7 +112,7 @@ describe Redch::Setup do
       end
 
       it 'does not request to create the sensor in the SOS again' do
-        expect_any_instance_of(Redch::SOS::Client::Sensor).to_not receive(:create).and_return(config.sos.device_id)
+        expect_any_instance_of(Redch::SOS::Client::Sensor).to_not receive(:create)
         subject.run
       end
     end

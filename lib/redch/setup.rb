@@ -14,12 +14,8 @@ class Redch::Setup
   def run
     raise StandardError, "device id and location must be specified" unless device_id && location
 
-    begin
-      register_device(device_id, location) unless done?
-      store_config config
-    rescue StandardError => e
-      puts e.message
-    end
+    register_device(device_id, location) unless done?
+    store_config config
   end
 
   def config
