@@ -24,7 +24,7 @@ describe Redch::Config do
 
     it 'raises if file does not exist' do
       allow(File).to receive(:open).with(filename, 'r').and_raise(Errno::ENOENT)
-      expect { Redch::Config.load }.to raise_error(StandardError)
+      expect { Redch::Config.load }.to raise_error(Errno::ENOENT)
     end
   end
 
