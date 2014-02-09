@@ -6,28 +6,33 @@ require 'eventmachine'
 class Redch::Simulate
   include Redch::Helpers
 
-  attr_accessor :period
+  attr_accessor :period, :mean, :dev
 
   # CHECK IT (MOVE IT TO CLI)
-  def initialize(device_id, location, period = 2, mean = 0.1, dev = 0.1)
+  def initialize(device_id, location)
     @device_id = device_id
     @location = location
 
-    @mean = mean
-    @dev = dev
-    @period = period
+    @mean = 2
+    @dev = 0.1
+    @period = 0.1
 
-    @sos_client = Redch::SOS::Client.new
+    Redch::SOS::Client.configure do |config|
+      config.namespace = 'http://www.redch.org/'
+      config.intended_app = 'energy'
+    end
+
+    @observation = Redch::SOS::Client::Observation.new
     @loop = Redch::Loop.new(@period)
   end
 
   def run(&block)
     @loop.start do
       begin
-        value = generate_value.round(3)
-        @sos_client.post_observation observation(value)
+        value = generate_value(@mean, @dev).round(3)
+        register_observation(value)
         yield(value) if block_given?
-      rescue Exception => e
+      rescue StandardError => e
         puts e.message
         @loop.stop
       end
@@ -38,27 +43,24 @@ class Redch::Simulate
     @loop.stop
   end
 
-  def sos_client=(sos_client)
-    @sos_client = sos_client
-  end
-
   def observation(value)
     {
-      sensor: @device_id,
-      samplingPoint: @location.join(' '),
-      observedProperty: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
-      featureOfInterest: "http://www.redch.org/test/featureOfInterest/#{@device_id}",
+      sensor_id: @device_id,
+      location: @location,
+      observed_prop: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
       result: value,
-      phenomenonTime: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
-      resultTime: Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z").to_s,
-      offering: "http://www.redch.org/offering/#{@device_id}/observations"
+      time: Time.now
     }
   end
 
-  def generate_value
-    value = @mean
-    lowest = @mean - @mean*@dev
-    highest = @mean + @mean*@dev
+  def register_observation(value)
+    @observation.create observation(value)
+  end
+
+  def generate_value(mean, dev)
+    value = mean
+    lowest = mean - mean*dev
+    highest = mean + mean*dev
     var = Random.new.rand(lowest..highest)
 
     if [true, false].sample

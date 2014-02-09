@@ -2,20 +2,24 @@ require 'hashr'
 require 'redch/config'
 
 class Redch::Setup
-  attr_writer :sos_client
-
   def initialize
     Redch::SOS::Client.configure do |config|
       config.namespace = 'http://www.redch.org/'
       config.intended_app = 'energy'
     end
+
     @sensor = Redch::SOS::Client::Sensor.new
   end
 
   def run
-    register_device(device_id) unless done?
-  rescue ArgumentError
-    raise StandardError, "No device id specified"
+    raise StandardError, "device id and location must be specified" unless device_id && location
+
+    begin
+      register_device(device_id, location) unless done?
+      store_config config
+    rescue StandardError => e
+      puts e.message
+    end
   end
 
   def config
@@ -56,23 +60,22 @@ class Redch::Setup
     false
   end
 
-  private
-  def store_config(config)
-    Redch::Config.save(config)
-  end
-
-  def register_device(id)
-    raise ArgumentError.new if id.nil?
-    raise StandardError, "No location specified" if location.nil?
-
-    @sensor.create(
+  def sensor(id)
+    {
       id: id,
       sensor_type: "in-situ",
       observation_type: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
       foi_type: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint',
       observable_prop_name: 'Photovoltaics',
       observable_prop: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics'
-    )
-    store_config config
+    }
+  end
+
+  def store_config(config)
+    Redch::Config.save(config)
+  end
+
+  def register_device(id, location)
+    @sensor.create sensor(id)
   end
 end
