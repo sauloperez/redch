@@ -36,8 +36,6 @@ module Redch::SOS
             return last_segment(link['@href']) if last_segment(link['@rel']) == 'self'
           end
         end
-      rescue Exception => e
-        raise e
       end
     end
 

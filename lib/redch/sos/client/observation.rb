@@ -14,7 +14,7 @@ module Redch::SOS
       private
       def observation(options)
         foi = "#{Client.configuration.namespace}featureOfInterest/#{options[:sensor_id]}"
-        offering = "#{Client.configuration.namespace}offering/#{options[:sensor_id]}"
+        offering = "#{Client.configuration.namespace}offering/#{options[:sensor_id]}/observations"
         {
           sensor: options[:sensor_id],
           samplingPoint: options[:location].join(' '),
@@ -31,8 +31,6 @@ module Redch::SOS
         http_post(observation) do |body|
           body['sosREST:Observation']['sosREST:link']
         end
-      rescue Exception => e
-        raise e
       end
     end
 
