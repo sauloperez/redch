@@ -15,7 +15,7 @@ class Redch::Simulate
 
     @mean = 2
     @dev = 0.1
-    @period = 0.1
+    @period = 2 # Timespan between observation requests
 
     Redch::SOS::Client.configure do |config|
       config.namespace = 'http://www.redch.org/'
@@ -49,6 +49,7 @@ class Redch::Simulate
       location: @location,
       observed_prop: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics',#'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
       result: value,
+      timespan: [Time.now - @period, Time.now],
       time: Time.now
     }
   end
