@@ -41,9 +41,6 @@ class Redch::CLI < Thor
     end
 
     @setup.run
-  rescue StandardError => e
-    puts e.message
-    exit
   end
 
   desc "simulate", "Simulate a sensor generating kWh sensor data samples"
@@ -59,9 +56,6 @@ class Redch::CLI < Thor
     simulate.run do |value|
       say("Observation with value #{value} sent")
     end
-  rescue StandardError => e
-    puts e.message
-    exit
   end
 
   # Methods not available as commands
