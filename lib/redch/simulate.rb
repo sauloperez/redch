@@ -13,8 +13,8 @@ class Redch::Simulate
     @device_id = device_id
     @location = location
 
-    @mean = 2
-    @dev = 0.1
+    @mean = 6
+    @dev = 0.5
     @period = 2 # Timespan between observation requests
 
     Redch::SOS::Client.configure do |config|
@@ -70,5 +70,6 @@ class Redch::Simulate
       # Don't allow negative values
       value = [value - var, 0.0].max
     end
+    value
   end
 end
