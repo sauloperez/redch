@@ -33,8 +33,8 @@ class Redch::Simulate
         register_observation(value)
         yield(value) if block_given?
       rescue StandardError => e
-        puts e.message
         @loop.stop
+        raise e
       end
     end
   end
@@ -47,7 +47,7 @@ class Redch::Simulate
     {
       sensor_id: @device_id,
       location: @location,
-      observed_prop: 'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
+      observed_prop: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics',#'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel',
       result: value,
       time: Time.now
     }
