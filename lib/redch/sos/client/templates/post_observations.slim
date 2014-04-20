@@ -1,20 +1,21 @@
 sosREST:Observation xmlns:sosREST="http://www.opengis.net/sosREST/1.0" xmlns:om="http://www.opengis.net/om/2.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"  xmlns:sf="http://www.opengis.net/sampling/2.0" service="SOS" version="2.0.0"
   om:OM_Observation
     om:phenomenonTime
-      gml:TimeInstant
-        gml:timePosition = phenomenonTime
+      gml:TimePeriod
+        gml:beginPosition = beginTime
+        gml:endPosition = endTime
     om:resultTime
       gml:TimeInstant
-        gml:timePosition = phenomenonTime
+        gml:timePosition = resultTime
     om:procedure xlink:href=sensor
     om:observedProperty xlink:href=observedProperty
     om:featureOfInterest
-      sams:SF_SpatialSamplingFeature gml:id="ssf_test_feature_6"
+      sams:SF_SpatialSamplingFeature gml:id="ssf_feature_1"
         gml:identifier codeSpace="" = featureOfInterest
         sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
         sf:sampledFeature xlink:href=featureOfInterest
         sams:shape
-          gml:Point gml:id="SamplingPoint1"
+          gml:Point gml:id="feature_1"
             gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326" = samplingPoint
     om:result xsi:type="gml:MeasureType" uom="urn:ogc:def:uom:OGC:m" = result
   sosREST:link rel="http://www.opengis.net/sosREST/1.0/offering-get" href=offering type="application/gml+xml"

@@ -3,44 +3,49 @@ require 'redch/config'
 
 class Redch::Setup
   def initialize
-    @config = Redch::Config.load rescue Hashr.new
-    @sos_client = Redch::SOS::Client.new
+    Redch::SOS::Client.configure do |config|
+      config.namespace = 'http://www.redch.org/'
+      config.intended_app = 'energy'
+    end
+
+    @sensor = Redch::SOS::Client::Sensor.new
   end
 
   def run
-    register_device(device_id) if !done?
-  rescue ArgumentError => e
-    raise StandardError, "No device id specified"
+    raise StandardError, "device id and location must be specified" unless device_id && location
+
+    register_device(device_id, location) unless done?
+    store_config config
+  end
+
+  def config
+    @config ||= Redch::Config.load rescue Hashr.new
   end
 
   def location=(location)
-    if @config.sos?
-      @config.sos.location = location
+    if config.sos?
+      config.sos.location = location
     else
-      @config.sos = { location: location }
+      config.sos = { location: location }
     end
   end
 
   def location
-    return @config.sos.location if @config.sos?
+    return config.sos.location if config.sos?
     nil
   end
 
   def device_id=(id)
-    if @config.sos?
-      @config.sos.device_id = id
+    if config.sos?
+      config.sos.device_id = id
     else
-      @config.sos = { device_id: id }
+      config.sos = { device_id: id }
     end
   end
 
   def device_id
-    return @config.sos.device_id if @config.sos?
+    return config.sos.device_id if config.sos?
     nil
-  end
-
-  def sos_client=(sos_client)
-    @sos_client = sos_client
   end
 
   # If it has been executed the config file must exist
@@ -51,16 +56,22 @@ class Redch::Setup
     false
   end
 
-  private
+  def sensor(id)
+    {
+      id: id,
+      sensor_type: "in-situ",
+      observation_type: 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement',
+      foi_type: 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint',
+      observable_prop_name: 'Photovoltaics',#'SolarPanel',
+      observable_prop: 'http://sweet.jpl.nasa.gov/2.3/phenEnergy.owl#Photovoltaics'#'http://purl.oclc.org/NET/ssnx/energy/ssn-energy#SolarPanel'
+    }
+  end
+
   def store_config(config)
     Redch::Config.save(config)
   end
 
-  def register_device(id)
-    raise ArgumentError.new if id.nil?
-    raise StandardError, "No location specified" if location.nil?
-
-    @sos_client.register_device(id)
-    store_config @config
+  def register_device(id, location)
+    @sensor.create sensor(id)
   end
 end

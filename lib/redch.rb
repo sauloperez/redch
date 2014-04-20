@@ -1,3 +1,2 @@
-module Redch
-    
+module Redch 
 end

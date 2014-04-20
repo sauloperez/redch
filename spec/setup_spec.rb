@@ -1,142 +1,121 @@
 require 'spec_helper'
 
-# The tests must be run in the following order
-# otherwise the database might contain references to the device
-# while the config file has been deleted (= inconsistent state)
-
 describe Redch::Setup do
-  let(:location) { [41.82749, 1.60584] }
-  let(:id) { Time.now.getutc.to_i.to_s }
-  let(:sos_client) { double 'sos_client' }
+  let(:device_id) { 1 }
+  let(:location) { [1.2, 2.1] }
+  let(:required_fields) { [:id, :sensor_type, :observation_type, :foi_type, :observable_prop_name, :observable_prop] }
 
-  before :all do
-    delete_config_file
+  let(:file) { double 'file' }
+  let(:filename) { Redch::Config.filename }
+
+  before do
+    allow(File).to receive(:open).with(filename, 'w').and_yield(file)
+    allow(file).to receive(:write)
   end
 
-  after :all do
-    delete_config_file
+  describe '#new' do
+    it 'configures the SOS client' do
+      expect(Redch::SOS::Client).to receive(:configure)
+      Redch::Setup.new
+    end
+
+    it 'instanciates a SOS::Client Sensor' do
+      expect(Redch::SOS::Client::Sensor).to receive(:new)
+      Redch::Setup.new
+    end
   end
 
-  before :each do
-    @setup = Redch::Setup.new    
+  describe '#sensor' do
+    it 'builds up a sensor payload' do
+      sensor = subject.sensor(device_id)
+      expect([sensor.keys]).to include required_fields
+    end
   end
 
-  describe '#run', :run => true do
+  describe '#register_device' do
+    it 'requests to store the device in the SOS' do
+      expect_any_instance_of(Redch::SOS::Client::Sensor).to receive(:create)
+      subject.register_device(device_id, location)
+    end
+  end
 
-    context 'when the setup has not been executed yet' do
-      it 'registers and stores the passed device id' do
-        delete_config_file
+  describe '#done?' do
+    it 'returns true if the configuration can be loaded' do
+      allow(Redch::Config).to receive(:load)
+      expect(subject.done?).to be true
+    end
 
-        sos_client
-          .should_receive(:register_device)
-          .with(id)
-          .and_return(id)
+    it 'returns false otherwise' do
+      allow(Redch::Config).to receive(:load).and_raise(StandardError)
+      expect(subject.done?).to be false
+    end
+  end
 
-        @setup.sos_client= sos_client
+  describe '#run' do
+    context 'when there\'s no stored configuration' do
+      let(:config) { Hashr.new }
 
-        @setup.location= location
-        @setup.device_id= id
-        @setup.run 
-        expect(@setup.device_id).to_not be_empty
+      before do
+        allow(Redch::Config).to receive(:load).and_raise(StandardError.new)
       end
 
-      it 'stores the passed coordinates as its location' do
-        delete_config_file
-
-        sos_client
-          .should_receive(:register_device)
-          .with(id)
-          .and_return(id)
-
-        @setup.sos_client= sos_client
-
-        @setup.location= location
-        @setup.device_id= id
-        @setup.run
-        expect(@setup.location).to eq(location)
+      it 'raises if either device_id or location are not set' do
+        expect { subject.run }.to raise_error StandardError
       end
 
-      it 'raises if any of location or device_id are not set' do
-        delete_config_file
+      context 'when all params are set' do
+        before :each do
+          subject.device_id= device_id
+          subject.location= location
+        end
 
-        sos_client.should_not_receive(:register_device)
+        it 'requests to create the sensor in the SOS' do
+          expect_any_instance_of(Redch::SOS::Client::Sensor).to receive(:create)
+          subject.run
+        end
 
-        # Only the device_id is passed
-        expect { 
-          setup = Redch::Setup.new
-          setup.sos_client= sos_client
-          setup.device_id= id
-          setup.run
-        }.to raise_error(StandardError)
+        it 'stores the configuration on successful request' do
+          allow_any_instance_of(Redch::SOS::Client::Sensor).to receive(:create)
+          expect(Redch::Config).to receive(:save).with(subject.config)
+          subject.run
+        end
 
-        # Only the location is passed
-        expect { 
-          setup = Redch::Setup.new
-          setup.sos_client= sos_client
-          setup.location= location
-          setup.run
-        }.to raise_error(StandardError)
+        context 'when the sensor can\'t be created' do
+          before do
+            allow_any_instance_of(Redch::SOS::Client::Sensor).to receive(:create).and_raise
+          end
 
-        # Neither of them is passed
-        expect { 
-          setup = Redch::Setup.new
-          setup.sos_client= sos_client
-          setup.run
-        }.to raise_error(StandardError)
+          it 'does not store the configuration' do
+            expect(Redch::Config).to_not receive(:save)
+            expect { subject.run }.to raise_error
+          end
+        end
+
       end
     end
 
-    context 'when the setup has already been executed' do
-      it "it doesn't call the service and keeps the device id" do
-        sos_client
-          .should_receive(:register_device)
-          .with(id)
-          .and_return(id)
-          
-        @setup.sos_client= sos_client
+    context 'when the stored configuration is not empty' do
+      let(:config) { Hashr.new(sos: { location: location, device_id: device_id }) }
 
-        @setup.device_id= id
-        @setup.location= location
-        @setup.run
-
-        sos_client.should_not_receive(:register_device)
-        @setup.run
-
-        expect(@setup.device_id).to eq(id)
+      before do
+        allow(Redch::Config).to receive(:load).and_return(config)
       end
-    end    
-  end
 
-  # It must be executed alone after previously reseting the DB with test data
-  # in order to avoid the inconsistent state produced by the #run test
-  describe '#done?', :done? => true do
-
-    context "when the setup has not been executed yet" do
-      it "returns false" do
-        delete_config_file
-
-        expect(@setup.done?).to eq(false)
+      it 'loads the device_id from it' do
+        expect(device_id).to eq config.sos.device_id
+        subject.run
       end
-    end
 
-    context "when the setup has already been executed" do
-      it "returns true" do
-        sos_client
-          .should_receive(:register_device)
-          .with(id)
-          .and_return(id)
+      it 'loads the location from it' do
+        expect(location).to eq config.sos.location
+        subject.run
+      end
 
-        @setup.sos_client= sos_client
-
-        @setup.device_id= id
-        @setup.location= location
-        @setup.run
-
-        sos_client.should_not_receive(:register_device)
-        @setup.run
-
-        expect(@setup.done?).to eq(true)
+      it 'does not request to create the sensor in the SOS again' do
+        expect_any_instance_of(Redch::SOS::Client::Sensor).to_not receive(:create)
+        subject.run
       end
     end
   end
+
 end

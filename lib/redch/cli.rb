@@ -34,21 +34,23 @@ class Redch::CLI < Thor
     # and avoid a Psych::BadAlias exception
     @setup.device_id= Mac.addr.dup
 
-    if !@setup.done?
-      say("Registering device #{@setup.device_id}...")
-    else
+    if @setup.done?
       say("Device #{@setup.device_id} already registered")
+    else
+      say("Registering device #{@setup.device_id}...")
     end
+
     @setup.run
   end
 
   desc "simulate", "Simulate a sensor generating kWh sensor data samples"
   option :period, :aliases => :p
   def simulate
+    # TODO load location from config and pass it as option to setup method
     setup
     config = Redch::Config.load
     simulate = Redch::Simulate.new(config.sos.device_id, config.sos.location)
-    simulate.period= options[:period] if options[:period]
+    simulate.period = options[:period].to_i if options[:period]
 
     say("Sending an observation from #{put_coords(@setup.location)} every #{simulate.period} seconds...\n\n")
     simulate.run do |value|
