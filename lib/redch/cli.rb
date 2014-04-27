@@ -19,20 +19,18 @@ class Redch::CLI < Thor
   desc "setup", "Sets up the environment to enable the use of the device"
   option :coordinates, :aliases => :c
   def setup
-    location = nil
-    if options[:coordinates]
-      # Remove spaces an split it up
-      location = options[:coordinates].gsub(/\s+/, "").split(",")
-    else
-      location = RandomLocation.near_by(41.65038, 1.13897, 90_000)
-    end
+    location =  if options[:coordinates]
+                  options[:coordinates].gsub(/\s+/, "").split(",")
+                else
+                  RandomLocation.near_by(41.65038, 1.13897, 90_000)
+                end
 
     @setup = Redch::Setup.new
-    @setup.location= location
+    @setup.location = location
 
     # It's the only way to not mess up the yaml
     # and avoid a Psych::BadAlias exception
-    @setup.device_id= Mac.addr.dup
+    @setup.device_id = Mac.addr.dup
 
     if @setup.done?
       say("Device #{@setup.device_id} already registered")
