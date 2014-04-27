@@ -32,7 +32,7 @@ The command-line interface comes with the methods `setup` and `simulate` that yo
 
 If no coordinates are provided, the `setup` command will pick up a random location near by Tàrrega within a range of 90 Km as the sensor location. It uses the first MAC address on your system as device unique identifier.
 
-    $ redch setup -c 41.65, 2.13
+    $ redch setup -c '41.65, 2.13'
 
 ### Simulate
 
