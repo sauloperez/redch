@@ -6,14 +6,21 @@ require 'redch/simulate'
 require 'thor'
 require 'macaddr'
 require 'random-location'
+require 'logger'
 
 class Redch::CLI < Thor
   include Thor::Actions
   include Redch::Helpers
 
+  attr_accessor :logger
+
   def initialize(*args)
     super
     install_traps
+
+    @logger = Logger.new($stdout).tap do |log|
+      log.progname = 'redch'
+    end
   end
 
   desc "setup", "Sets up the environment to enable the use of the device"
@@ -33,9 +40,9 @@ class Redch::CLI < Thor
     @setup.device_id = Mac.addr.dup
 
     if @setup.done?
-      say("Device #{@setup.device_id} already registered")
+      logger.info "Device #{@setup.device_id} already registered"
     else
-      say("Registering device #{@setup.device_id}...")
+      logger.info "Registering device #{@setup.device_id}..."
     end
 
     @setup.run
@@ -50,9 +57,9 @@ class Redch::CLI < Thor
     simulate = Redch::Simulate.new(config.sos.device_id, config.sos.location)
     simulate.period = options[:period].to_i if options[:period]
 
-    say("Sending an observation from #{put_coords(@setup.location)} every #{simulate.period} seconds...\n\n")
+    logger.info "Sending an observation from #{put_coords(@setup.location)} every #{simulate.period} seconds...\n\n"
     simulate.run do |value|
-      say("Observation with value #{value} sent")
+      logger.info "sensor=#{@setup.device_id} location=#{@setup.location} value=#{value} unit=W"
     end
   end
 
