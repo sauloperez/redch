@@ -10,13 +10,13 @@ def mac
 end
 
 sensors = {
-  barcelona: '41.3850639,2.1734035',
+ # barcelona: '41.3850639,2.1734035',
   manresa: '41.7292826,1.8225154',
   tortosa: '40.8125777, 0.5214423',
   palafrugell: '41.9179112, 3.1629611',
-  solsona: '41.995121, 1.517781',
+ # solsona: '41.995121, 1.517781',
   lleida: '41.6175899, 0.62001459',
-  sort: '42.4110889, 1.13014169'
+ # sort: '42.4110889, 1.13014169'
 }
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
