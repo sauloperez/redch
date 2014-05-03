@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 # Generates IEEE locally-assigned MAC addresses
+#
 # @return [String] following the pattern [0-9A-Fa-f][26AEae][0-9A-Fa-f]{10}
 def mac
   mac = ('%0.2X' % rand(256))[0, 1] + %w(2 6 A E).sample
@@ -10,12 +11,12 @@ end
 
 sensors = {
   barcelona: '41.3850639,2.1734035',
-  manresa: '41.7292826,1.8225154'
-  # tortosa: [40.8125777, 0.5214423],
-  # palafrugell: [41.9179112, 3.1629611],
-  # solsona: [41.995121, 1.517781],
-  # lleida: [41.6175899, 0.62001459],
-  # sort: [42.4110889, 1.13014169]
+  manresa: '41.7292826,1.8225154',
+  tortosa: '40.8125777, 0.5214423',
+  palafrugell: '41.9179112, 3.1629611',
+  solsona: '41.995121, 1.517781',
+  lleida: '41.6175899, 0.62001459',
+  sort: '42.4110889, 1.13014169'
 }
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
