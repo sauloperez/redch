@@ -20,6 +20,7 @@ module Redch
       mac = ('%0.2X' % rand(256))[0, 1] + %w(2 6 A E).sample
       mac << (1..5).map { "%0.2X" % rand(256) }.join
     end
+
     def delete_config_file
       filename = Redch::Config.filename
       File.delete(filename) if File.exist?(filename)
