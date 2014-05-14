@@ -6,7 +6,7 @@
 DIR=/home/vagrant/redch
 URL=http://54.72.170.113:8080/webapp/sos/rest
 BIN_DIR=/usr/local/bin
-BRANCH=develop
+BRANCH=testing
 REDCH_BIN=$BIN_DIR/redch
 PROFILE_SCRIPT=/etc/profile.d/redch.sh
 
