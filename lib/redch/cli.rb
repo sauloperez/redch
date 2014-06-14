@@ -41,7 +41,7 @@ class Redch::CLI < Thor
     @setup.run
   end
 
-  desc "simulate", "Simulate a sensor generating kWh sensor data samples"
+  desc "simulate", "Simulate a sensor generating electrical power samples in W"
   option :period, :aliases => :p
   def simulate
     # TODO load location from config and pass it as option to setup method
