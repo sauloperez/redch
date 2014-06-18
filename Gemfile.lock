@@ -57,7 +57,6 @@ PLATFORMS
 DEPENDENCIES
   amqp (~> 1.0.2)
   byebug
-  foreman
   hashr (~> 0.0.22)
   json (~> 1.8.0)
   macaddr (~> 1.6.1)
