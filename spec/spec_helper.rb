@@ -6,8 +6,9 @@ require_relative '../lib/redch/loop.rb'
 require_relative '../lib/redch/simulate.rb'
 require_relative '../lib/redch/sos/client/templates.rb'
 
-require 'webmock/rspec'
 require 'yaml'
+require 'byebug'
+require 'webmock/rspec'
 
 RSpec.configure do |config|
   config.include Redch::Helpers

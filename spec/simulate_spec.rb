@@ -8,7 +8,7 @@ describe Redch::Simulate do
   let(:value) { 2.3 }
   let(:device_id) { 1 }
   let(:location) { [1.2, 2.1] }
-  let(:required_fields) { [:sensor_id, :location, :observed_prop, :result, :time] }
+  let(:required_fields) { [:sensor_id, :location, :observed_prop, :result, :timespan, :time] }
   let(:loop) { double }
 
   before do
@@ -107,19 +107,18 @@ describe Redch::Simulate do
     end
 
     context 'when the observation can\'t be created' do
-      before do
-        allow_any_instance_of(Redch::SOS::Client::Observation).to receive(:create).and_raise
+      before :each do
+        allow_any_instance_of(Redch::SOS::Client::Observation).to receive(:create).and_raise(StandardError)
       end
 
-      it 'outputs the error message' do
+      it 'raises the exception' do
         allow(loop).to receive(:stop)
-        expect_any_instance_of(StandardError).to receive(:message)
-        subject.run
+        expect { subject.run }.to raise_error(StandardError)
       end
 
       it 'stops the loop' do
         expect(loop).to receive(:stop)
-        subject.run
+        expect { subject.run }.to raise_error(StandardError)
       end
     end
   end
