@@ -13,9 +13,12 @@ module Redch
       end
     end
 
-    # return a random valid MAC address
-    def random_MAC_address
-      (1..6).map { "%0.2X"%rand(256) }.join(':')
+    # Generates IEEE locally-assigned MAC addresses
+    #
+    # @return [String] following the pattern [0-9A-Fa-f][26AEae][0-9A-Fa-f]{10}
+    def mac
+      mac = ('%0.2X' % rand(256))[0, 1] + %w(2 6 A E).sample
+      mac << (1..5).map { "%0.2X" % rand(256) }.join
     end
 
     def delete_config_file

@@ -1,27 +1,56 @@
 #!/usr/bin/env bash
 
-# System update and install common libraries
-cd
-sudo apt-get update
-sudo apt-get install -y build-essential libreadline-dev libssl-dev zlib1g-dev libxml2-dev libxslt1-dev
-sudo apt-get install -y curl
-sudo apt-get install -y git-core git
+# Provision and install a redch client in ubuntu
+# Run as: provisioning.sh <latitude>, <longitude> 
 
-# Install RVM
-\curl -L https://get.rvm.io | sudo bash -s stable --autolibs=3 --ruby=1.9.3
+DIR=/home/vagrant/redch
+URL=http://54.72.170.113:8080/webapp/sos/rest
+BIN_DIR=/usr/local/bin
+BRANCH=testing
+REDCH_BIN=$BIN_DIR/redch
+PROFILE_SCRIPT=/etc/profile.d/redch.sh
 
-# start up a new shell session
-source /usr/local/rvm/scripts/rvm
+set -e # Exit script immediately on first error.
+set -x # Print commands and their arguments as they are executed.
 
-# Avoid annoying 'RVM is not a function' error. Allows login shell
-# /bin/bash --login
+# Nokogiri requirements
+sudo apt-get install -y libxslt-dev libxml2-dev
 
-# and let RVM install its dependencies
-rvm requirements
+# Set up required environment variables
+if [ ! -f $PROFILE_SCRIPT ]; then
+  sudo echo "export PATH=$PATH:$BIN_DIR"
+  sudo echo "export REDCH_LOCATION='$1'" >> $PROFILE_SCRIPT
+  sudo echo "export REDCH_SOS_URL=$URL" >> $PROFILE_SCRIPT
+  source /etc/profile
+fi
 
-# Install ruby and use the version we install
-rvm install 1.9.3
-rvm use 1.9.3
+# Install bundler
+bundle -v > /dev/null 2>&1 || sudo gem install bundler
 
-# We can't live without ruby gems!
-rvm rubygems current
+function install_cli {
+  git clone --depth 1 --branch $BRANCH https://github.com/sauloperez/redch.git $DIR
+  sudo chown -R vagrant:vagrant $DIR
+  sudo su vagrant -c "cd $DIR; bundle install --without development test"
+}
+
+# Check if the source code must be updated
+if [ -d $DIR ]; then
+  cd $DIR
+
+  LOCAL=$(git rev-parse HEAD)
+  REMOTE=$(git rev-parse @{u})
+
+  # Remove any previous installation
+  if [ $LOCAL != $REMOTE ]; then
+    test -d $DIR && rm -rf $DIR
+    install_cli
+  fi
+else
+  install_cli
+fi
+
+# Symlink it to make it globally accessible
+if [ ! -L $REDCH_BIN ]; then
+  ln -s $DIR/bin/redch $REDCH_BIN
+fi
+
