@@ -2,19 +2,19 @@
 # vi: set ft=ruby :
 
 sensors = {
-  manresa: {
+  sensor1: {
     mac: '1665e9faf6dd',
     coords: '41.7292826,1.8225154'
   },
-  tortosa: {
+  sensor2: {
     mac: '66bb131c9662',
     coords: '40.8125777, 0.5214423'
   },
-  palafrugell: {
+  sensor3: {
     mac: '1add3146a2ab',
     coords: '41.9179112, 3.1629611'
   },
-  lleida: {
+  sensor4: {
     mac: '523095eaf9a4',
     coords: '41.6175899, 0.62001459'
   }

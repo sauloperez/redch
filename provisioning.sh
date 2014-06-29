@@ -6,12 +6,15 @@
 DIR=/home/vagrant/redch
 URL=http://54.72.170.113:8080/webapp/sos/rest
 BIN_DIR=/usr/local/bin
-BRANCH=testing
+BRANCH=master
 REDCH_BIN=$BIN_DIR/redch
 PROFILE_SCRIPT=/etc/profile.d/redch.sh
 
 set -e # Exit script immediately on first error.
 set -x # Print commands and their arguments as they are executed.
+
+# After booting for first time...
+sudo apt-get update
 
 # Nokogiri requirements
 sudo apt-get install -y libxslt-dev libxml2-dev
